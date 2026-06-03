@@ -5,6 +5,8 @@ import { ICON } from "./components/icons";
 import { snip } from "./lib/snipcart";
 
 const money = (n: number) => "$" + n.toFixed(0);
+/** Sibling WebP path for a /img/*.jpeg source (generated at build/asset time). */
+const webp = (src: string) => src.replace(/\.jpe?g$/i, ".webp");
 
 /* ===================== NAV ===================== */
 export function Nav() {
@@ -32,7 +34,7 @@ export function Nav() {
       }}
     >
       <div className="wrap flex items-center justify-between" style={{ height: 78 }}>
-        <nav className="hidden md:flex flex-1" style={{ gap: 30 }}>
+        <nav className="hidden md:flex flex-1" style={{ gap: 30 }} aria-label="Primary">
           {links.map((l) => (
             <a key={l.label} href={l.href} className="link-underline">
               {l.label}
@@ -47,8 +49,8 @@ export function Nav() {
             {shopLabel}
           </a>
           <button
-            className="snipcart-checkout inline-flex items-center"
-            aria-label="Cart"
+            className="snipcart-checkout icon-btn inline-flex items-center"
+            aria-label="Open cart"
             style={{
               background: "none",
               border: 0,
@@ -60,23 +62,30 @@ export function Nav() {
               textTransform: "uppercase",
             }}
           >
-            <span style={{ width: 22, display: "inline-block" }}>{ICON.cart}</span>
-            <span>
+            <span aria-hidden="true" style={{ width: 22, display: "inline-block" }}>
+              {ICON.cart}
+            </span>
+            <span aria-hidden="true">
               (<span className="snipcart-items-count">0</span>)
             </span>
+            <span className="sr-only">items in cart</span>
           </button>
           <button
-            className="md:hidden"
+            className="icon-btn md:hidden"
             onClick={() => setOpen((o) => !o)}
-            aria-label="Menu"
-            style={{ background: "none", border: 0, color: "inherit", width: 24 }}
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls={open ? "mobile-menu" : undefined}
+            style={{ background: "none", border: 0, color: "inherit" }}
           >
-            {open ? ICON.close : ICON.menu}
+            <span aria-hidden="true" style={{ width: 24, display: "inline-flex" }}>
+              {open ? ICON.close : ICON.menu}
+            </span>
           </button>
         </div>
       </div>
       {open && (
-        <div className="wrap flex flex-col md:hidden" style={{ paddingBottom: 22, gap: 16 }}>
+        <div id="mobile-menu" className="wrap flex flex-col md:hidden" style={{ paddingBottom: 22, gap: 16 }}>
           {[...links, { label: shopLabel, href: "#line" }].map((l) => (
             <a
               key={l.label}
@@ -103,12 +112,19 @@ export function Hero() {
       className="relative flex items-end overflow-hidden"
       style={{ minHeight: "100svh", color: "#f3efe6", background: "#1a2114" }}
     >
-      <img
-        src={h.image}
-        alt="The Gypsi hero"
-        className="absolute inset-0 w-full h-full"
-        style={{ objectFit: "cover", objectPosition: "50% 45%" }}
-      />
+      <picture>
+        <source srcSet={webp(h.image)} type="image/webp" />
+        <img
+          src={h.image}
+          alt="A model with luminous, glowing skin — The Gypsi botanical skincare"
+          width={660}
+          height={1537}
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full"
+          style={{ objectFit: "cover", objectPosition: "50% 45%" }}
+        />
+      </picture>
       <div
         className="absolute inset-0"
         style={{ background: "linear-gradient(180deg, rgba(18,24,14,.55) 0%, rgba(18,24,14,.05) 28%, rgba(18,24,14,.12) 55%, rgba(15,20,11,.82) 100%)" }}
@@ -120,13 +136,13 @@ export function Hero() {
 
       <div className="wrap relative w-full" style={{ paddingBottom: "clamp(40px, 7vh, 84px)", paddingTop: 120 }}>
         <Reveal>
-          <p className="eyebrow" style={{ color: "rgba(243,239,230,.85)", marginBottom: 22 }}>
+          <p className="eyebrow" style={{ color: "rgba(243,239,230,.92)", marginBottom: 22 }}>
             {h.eyebrow}
           </p>
         </Reveal>
         <h1 className="display h1" style={{ maxWidth: "14ch" }}>
           {lines.map((l, i) => (
-            <Reveal as="span" key={i} delay={120 + i * 110} style={{ display: "block" }}>
+            <Reveal as="span" key={l + i} delay={120 + i * 110} style={{ display: "block" }}>
               {l}
             </Reveal>
           ))}
@@ -172,7 +188,7 @@ export function Marquee() {
   const row = (
     <span className="marquee__item">
       {items.map((t, i) => (
-        <span key={i} className="inline-flex items-center" style={{ gap: "3rem" }}>
+        <span key={t + i} className="inline-flex items-center" style={{ gap: "3rem" }}>
           <span>{t}</span>
           <span style={{ opacity: 0.4 }}>✦</span>
         </span>
@@ -180,7 +196,11 @@ export function Marquee() {
     </span>
   );
   return (
-    <div className="marquee" style={{ borderTop: "1px solid var(--color-line)", borderBottom: "1px solid var(--color-line)", padding: "20px 0", background: "var(--color-sand-deep)" }}>
+    <div
+      className="marquee"
+      aria-hidden="true"
+      style={{ borderTop: "1px solid var(--color-line)", borderBottom: "1px solid var(--color-line)", padding: "20px 0", background: "var(--color-sand-deep)" }}
+    >
       <div className="marquee__track">
         {row}
         {row}
@@ -246,7 +266,16 @@ export function ProductFeature() {
     <section id="serum" className="section" style={{ background: "var(--color-sand-deep)" }}>
       <div className="wrap grid grid-cols-1 md:grid-cols-2 items-center" style={{ gap: "clamp(32px, 6vw, 80px)" }}>
         <Reveal className="order-1 md:order-none">
-          <img src={p.img} alt={p.name} style={{ aspectRatio: "4/5", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }} />
+          <picture>
+            <source srcSet={webp(p.img)} type="image/webp" />
+            <img
+              src={p.img}
+              alt={p.name}
+              loading="lazy"
+              decoding="async"
+              style={{ aspectRatio: "4/5", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
+            />
+          </picture>
         </Reveal>
         <div>
           <Reveal>
@@ -269,7 +298,9 @@ export function ProductFeature() {
             <ul className="grid" style={{ listStyle: "none", padding: 0, margin: "0 0 30px", gap: 12 }}>
               {f.bullets.map((t) => (
                 <li key={t} className="flex items-center" style={{ gap: 12, color: "var(--color-ink-soft)" }}>
-                  <span style={{ color: "var(--color-moss)", width: 16, flex: "0 0 16px" }}>{ICON.arrowR}</span>
+                  <span aria-hidden="true" style={{ color: "var(--color-moss)", width: 16, flex: "0 0 16px" }}>
+                    {ICON.arrowR}
+                  </span>
                   {t}
                 </li>
               ))}
@@ -284,7 +315,9 @@ export function ProductFeature() {
                 {added ? "Added ✦" : "Add to Bag"}
               </Button>
               <div className="flex items-center" style={{ gap: 8, color: "var(--color-ink-mute)", fontSize: ".82rem" }}>
-                <span style={{ color: "var(--color-tan)", display: "inline-flex", width: 15 }}>{ICON.star}</span>
+                <span aria-hidden="true" style={{ color: "var(--color-tan)", display: "inline-flex", width: 15 }}>
+                  {ICON.star}
+                </span>
                 {f.rating}
               </div>
             </div>
@@ -299,11 +332,11 @@ export function ProductFeature() {
 export function Ingredients() {
   const s = content.ingredientsSection;
   return (
-    <section className="section" style={{ background: "var(--color-forest)", color: "#eef1e4" }}>
+    <section id="ingredients" className="section" style={{ background: "var(--color-forest)", color: "#eef1e4" }}>
       <div className="wrap">
         <div className="grid grid-cols-1 md:grid-cols-2 items-end" style={{ gap: 40, marginBottom: 56 }}>
           <Reveal>
-            <p className="eyebrow" style={{ color: "rgba(238,241,228,.7)", marginBottom: 16 }}>
+            <p className="eyebrow" style={{ color: "rgba(238,241,228,.85)", marginBottom: 16 }}>
               {s.eyebrow}
             </p>
             <h2 className="display h2" style={{ color: "#eef1e4" }}>
@@ -313,7 +346,7 @@ export function Ingredients() {
             </h2>
           </Reveal>
           <Reveal delay={120}>
-            <p className="lede" style={{ color: "rgba(238,241,228,.82)", margin: 0 }}>
+            <p className="lede" style={{ color: "rgba(238,241,228,.86)", margin: 0 }}>
               {s.body}
             </p>
           </Reveal>
@@ -329,6 +362,7 @@ export function Ingredients() {
               style={{ background: "var(--color-forest)", padding: "30px 24px", minHeight: 230, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
             >
               <span
+                aria-hidden="true"
                 style={{ height: 64, width: 64, borderRadius: "50%", alignSelf: "flex-start", border: "1px solid rgba(238,241,228,.4)", display: "grid", placeItems: "center", color: "var(--color-tan)" }}
               >
                 <span style={{ width: 26, display: "inline-flex" }}>{ICON.leaf}</span>
@@ -338,7 +372,7 @@ export function Ingredients() {
                   {g.role}
                 </p>
                 <h3 style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: "1.5rem", margin: "0 0 8px" }}>{g.name}</h3>
-                <p style={{ color: "rgba(238,241,228,.72)", fontSize: ".9rem", margin: 0 }}>{g.note}</p>
+                <p style={{ color: "rgba(238,241,228,.78)", fontSize: ".9rem", margin: 0 }}>{g.note}</p>
               </div>
             </Reveal>
           ))}
@@ -366,7 +400,7 @@ export function Line() {
             </h2>
           </Reveal>
           <Reveal delay={100}>
-            <a href="#" className="link-underline">
+            <a href="#line" className="link-underline">
               View all products
             </a>
           </Reveal>
@@ -382,12 +416,20 @@ export function Line() {
 }
 
 function ProductCard({ p, delay }: { p: (typeof content.line)[number]; delay: number }) {
-  const [hover, setHover] = useState(false);
   return (
     <Reveal delay={delay}>
-      <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="flex flex-col" style={{ gap: 14 }}>
-        <div className="relative">
-          <img src={p.img} alt={p.name} style={{ aspectRatio: "3/4", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }} />
+      <div className="flex flex-col" style={{ gap: 14 }}>
+        <div className="card-media relative">
+          <picture>
+            <source srcSet={webp(p.img)} type="image/webp" />
+            <img
+              src={p.img}
+              alt={p.name}
+              loading="lazy"
+              decoding="async"
+              style={{ aspectRatio: "3/4", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
+            />
+          </picture>
           {p.tag && (
             <span
               className="absolute"
@@ -398,12 +440,16 @@ function ProductCard({ p, delay }: { p: (typeof content.line)[number]; delay: nu
           )}
           <button
             {...snip(p)}
-            className={`snipcart-add-item absolute`}
+            className="snipcart-add-item card-add absolute"
             style={{
               left: 12,
               right: 12,
               bottom: 12,
+              minHeight: 44,
               padding: "13px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               background: "var(--color-ink)",
               color: "var(--color-sand)",
               border: 0,
@@ -412,9 +458,6 @@ function ProductCard({ p, delay }: { p: (typeof content.line)[number]; delay: nu
               fontSize: ".66rem",
               letterSpacing: ".24em",
               textTransform: "uppercase",
-              opacity: hover ? 1 : 0,
-              transform: hover ? "none" : "translateY(8px)",
-              transition: "opacity .35s, transform .35s",
             }}
           >
             Add — {money(p.price)}
@@ -442,7 +485,18 @@ export function Story() {
       <div className="wrap grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] items-center" style={{ gap: "clamp(30px,5vw,70px)" }}>
         <Reveal>
           <div style={{ boxShadow: "0 30px 70px -30px rgba(20,28,14,.55)", borderRadius: 3, overflow: "hidden", border: "1px solid var(--color-line)" }}>
-            <img src={s.image} alt="The Gypsi — founder's journey" style={{ width: "100%", display: "block" }} />
+            <picture>
+              <source srcSet={webp(s.image)} type="image/webp" />
+              <img
+                src={s.image}
+                alt="The Gypsi founder sourcing botanical ingredients on her travels"
+                width={1023}
+                height={1537}
+                loading="lazy"
+                decoding="async"
+                style={{ width: "100%", aspectRatio: "1023 / 1537", objectFit: "cover", display: "block" }}
+              />
+            </picture>
           </div>
         </Reveal>
         <div>
@@ -464,7 +518,7 @@ export function Story() {
             </p>
           </Reveal>
           <Reveal delay={220}>
-            <Button variant="ghost" href="#" arrow>
+            <Button variant="ghost" href="#story" arrow>
               Read the journey
             </Button>
           </Reveal>
@@ -480,20 +534,19 @@ export function Reviews() {
     <section className="section" style={{ background: "var(--color-sand-deep)" }}>
       <div className="wrap">
         <Reveal>
-          <p className="eyebrow" style={{ textAlign: "center", marginBottom: 46 }}>
+          <h2 className="eyebrow" style={{ textAlign: "center", margin: "0 0 46px" }}>
             Loved in 40+ countries
-          </p>
+          </h2>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: "clamp(20px,3vw,40px)" }}>
-          {content.reviews.map((r, i) => (
+          {content.reviews.map((r) => (
             <Reveal
-              key={i}
-              delay={i * 110}
+              key={`${r.a}-${r.loc}`}
               style={{ background: "var(--color-card)", border: "1px solid var(--color-line)", padding: "34px 30px", display: "flex", flexDirection: "column", gap: 18 }}
             >
-              <div className="flex" style={{ gap: 4, color: "var(--color-tan)" }}>
+              <div className="flex" role="img" aria-label={`Rated ${r.r} out of 5 stars`} style={{ gap: 4, color: "var(--color-tan)" }}>
                 {Array.from({ length: r.r }).map((_, k) => (
-                  <span key={k} style={{ width: 14, display: "inline-flex" }}>
+                  <span key={k} aria-hidden="true" style={{ width: 14, display: "inline-flex" }}>
                     {ICON.star}
                   </span>
                 ))}
@@ -517,21 +570,29 @@ export function Newsletter() {
   const n = content.newsletter;
   const [val, setVal] = useState("");
   const [done, setDone] = useState(false);
+  const [error, setError] = useState("");
 
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!/.+@.+\..+/.test(val)) return;
+    if (!/.+@.+\..+/.test(val)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setError("");
     const body = new URLSearchParams({ "form-name": "newsletter", email: val });
     fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() })
-      .then(() => setDone(true))
-      .catch(() => setDone(true));
+      .then((res) => {
+        if (res.ok) setDone(true);
+        else setError("Something went wrong — please try again.");
+      })
+      .catch(() => setError("Network error — please try again."));
   };
 
   return (
-    <section className="section" style={{ background: "var(--color-forest)", color: "#eef1e4" }}>
+    <section id="newsletter" className="section" style={{ background: "var(--color-forest)", color: "#eef1e4" }}>
       <div className="wrap" style={{ textAlign: "center", maxWidth: 760, marginInline: "auto" }}>
         <Reveal>
-          <p className="eyebrow" style={{ color: "rgba(238,241,228,.7)", marginBottom: 18 }}>
+          <p className="eyebrow" style={{ color: "rgba(238,241,228,.85)", marginBottom: 18 }}>
             {n.eyebrow}
           </p>
         </Reveal>
@@ -541,13 +602,13 @@ export function Newsletter() {
           </h2>
         </Reveal>
         <Reveal delay={140}>
-          <p className="lede" style={{ color: "rgba(238,241,228,.82)", marginInline: "auto", marginBottom: 30 }}>
+          <p className="lede" style={{ color: "rgba(238,241,228,.86)", marginInline: "auto", marginBottom: 30 }}>
             {n.body}
           </p>
         </Reveal>
         <Reveal delay={200}>
           {done ? (
-            <p className="display" style={{ letterSpacing: ".16em", fontSize: "1rem" }}>
+            <p role="status" aria-live="polite" className="display" style={{ letterSpacing: ".16em", fontSize: "1rem" }}>
               Welcome to The Gypsi ✦ check your inbox
             </p>
           ) : (
@@ -557,7 +618,7 @@ export function Newsletter() {
               data-netlify="true"
               netlify-honeypot="bot-field"
               onSubmit={submit}
-              className="flex flex-wrap justify-center"
+              className="newsletter-form flex flex-wrap justify-center"
               style={{ gap: 12, maxWidth: 480, marginInline: "auto" }}
             >
               <input type="hidden" name="form-name" value="newsletter" />
@@ -566,18 +627,29 @@ export function Newsletter() {
                   Don't fill this out: <input name="bot-field" />
                 </label>
               </p>
+              <label htmlFor="nl-email" className="sr-only">
+                Email address
+              </label>
               <input
+                id="nl-email"
                 value={val}
                 onChange={(e) => setVal(e.target.value)}
                 type="email"
                 name="email"
                 required
                 placeholder="your@email.com"
-                style={{ flex: "1 1 240px", background: "transparent", border: "1px solid rgba(238,241,228,.4)", color: "#eef1e4", padding: "15px 18px", borderRadius: 999, fontFamily: "var(--font-display)", letterSpacing: ".08em", fontSize: ".9rem", outline: "none" }}
+                aria-invalid={error ? true : undefined}
+                aria-describedby={error ? "nl-error" : undefined}
+                style={{ flex: "1 1 240px", background: "transparent", border: "1px solid rgba(238,241,228,.55)", color: "#eef1e4", padding: "15px 18px", borderRadius: 999, fontFamily: "var(--font-display)", letterSpacing: ".08em", fontSize: ".9rem" }}
               />
               <Button variant="light" arrow>
                 Subscribe
               </Button>
+              {error && (
+                <p id="nl-error" role="alert" style={{ flexBasis: "100%", margin: "4px 0 0", color: "#f3efe6", fontSize: ".8rem", letterSpacing: ".04em" }}>
+                  {error}
+                </p>
+              )}
             </form>
           )}
         </Reveal>
@@ -604,9 +676,9 @@ export function Footer() {
               </p>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gap: 10 }}>
                 {col.links.map((it) => (
-                  <li key={it}>
-                    <a href="#" style={{ color: "var(--color-ink-soft)", fontSize: ".9rem" }} className="link-underline">
-                      {it}
+                  <li key={it.label}>
+                    <a href={it.href} style={{ color: "var(--color-ink-soft)", fontSize: ".9rem" }} className="link-underline">
+                      {it.label}
                     </a>
                   </li>
                 ))}
@@ -618,8 +690,8 @@ export function Footer() {
           <span>{f.copyright}</span>
           <span className="flex" style={{ gap: 22 }}>
             {f.social.map((sLink) => (
-              <a key={sLink} href="#" className="link-underline">
-                {sLink}
+              <a key={sLink.label} href={sLink.href} className="link-underline">
+                {sLink.label}
               </a>
             ))}
           </span>

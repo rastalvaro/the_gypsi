@@ -11,7 +11,7 @@ export function snip(p: Product): Record<string, string> {
     "data-item-name": p.name,
     "data-item-price": Number(p.price).toFixed(2),
     "data-item-url": "/products.html",
-    "data-item-image": p.img,
+    "data-item-image": (import.meta.env.VITE_SITE_URL ?? "") + p.img,
     "data-item-description": p.type,
   };
 }
@@ -24,7 +24,6 @@ export function initSnipcart(): void {
   const key = import.meta.env.VITE_SNIPCART_KEY as string | undefined;
   const VER = "3.7.1";
   if (!key) {
-    // eslint-disable-next-line no-console
     console.info("[Gypsi] Store dormant — set VITE_SNIPCART_KEY in .env to enable checkout.");
     return;
   }

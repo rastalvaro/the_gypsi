@@ -85,12 +85,40 @@ export const content: SiteContent = {
     columns: [
       {
         heading: "Shop",
-        links: ["The Miracle Serum", "Verdant Mask", "Wanderer's Oil", "Moonlit Balm", "Gift sets"],
+        links: [
+          { label: "The Miracle Serum", href: "#serum" },
+          { label: "Verdant Mask", href: "#line" },
+          { label: "Wanderer's Oil", href: "#line" },
+          { label: "Moonlit Balm", href: "#line" },
+        ],
       },
-      { heading: "About", links: ["Our story", "Ingredients", "Sustainability", "Journal"] },
-      { heading: "Care", links: ["Contact", "Shipping & returns", "FAQ", "Track order"] },
+      {
+        heading: "About",
+        // TODO(owner): point Sustainability/Journal at real pages once they exist.
+        links: [
+          { label: "Our story", href: "#story" },
+          { label: "Ingredients", href: "#ingredients" },
+          { label: "Sustainability", href: "#" },
+          { label: "Journal", href: "#" },
+        ],
+      },
+      {
+        heading: "Care",
+        // TODO(owner): add a contact email (mailto:) and real policy/FAQ/tracking pages.
+        links: [
+          { label: "Contact", href: "#newsletter" },
+          { label: "Shipping & returns", href: "#" },
+          { label: "FAQ", href: "#" },
+          { label: "Track order", href: "#" },
+        ],
+      },
     ],
-    social: ["Instagram", "TikTok", "Privacy"],
+    // TODO(owner): replace with real profile URLs and a Privacy page.
+    social: [
+      { label: "Instagram", href: "#" },
+      { label: "TikTok", href: "#" },
+      { label: "Privacy", href: "#" },
+    ],
     copyright: "© 2026 The Gypsi. All rights reserved.",
   },
 

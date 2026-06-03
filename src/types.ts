@@ -39,15 +39,20 @@ export interface Newsletter {
   body: string;
 }
 
+export interface FooterLink {
+  label: string;
+  href: string;
+}
+
 export interface FooterColumn {
   heading: string;
-  links: string[];
+  links: FooterLink[];
 }
 
 export interface Footer {
   tagline: string;
   columns: FooterColumn[];
-  social: string[];
+  social: FooterLink[];
   copyright: string;
 }
 

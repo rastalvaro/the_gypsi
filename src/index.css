@@ -13,7 +13,7 @@
   --color-card: #fbf9f3;
   --color-ink: #2a3326; /* deep forest near-black */
   --color-ink-soft: #4c5743;
-  --color-ink-mute: #828b73;
+  --color-ink-mute: #565d4c; /* darkened to pass WCAG AA on sand backgrounds */
   --color-line: #cdc4b0; /* hairlines */
   --color-forest: #34412c;
   --color-sage: #7e8b6a;
@@ -269,4 +269,78 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 3rem;
+}
+
+/* ---- Accessibility: visible keyboard focus ---- */
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-moss);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Dark forest sections need a light ring to stay visible. */
+.newsletter-form :focus-visible {
+  outline-color: #f3efe6;
+}
+
+/* ---- Skip link (off-screen until focused) ---- */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -64px;
+  z-index: 100;
+  background: var(--color-ink);
+  color: var(--color-sand);
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* ---- Screen-reader-only text ---- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Icon-only buttons: 44px minimum touch target ---- */
+.icon-btn {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Product card "Add to Bag" button ----
+   Touch / keyboard: always visible (so mobile shoppers can buy).
+   Pointer-with-hover: keep the original elegant reveal on hover, and also
+   reveal on keyboard focus-within. */
+.card-add {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.35s, transform 0.35s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .card-add {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .card-media:hover .card-add,
+  .card-media:focus-within .card-add {
+    opacity: 1;
+    transform: none;
+  }
 }

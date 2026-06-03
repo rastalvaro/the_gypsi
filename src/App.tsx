@@ -15,16 +15,21 @@ import {
 export default function App() {
   return (
     <>
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <Nav />
-      <Hero />
-      <Marquee />
-      <ProductFeature />
-      <Ritual />
-      <Ingredients />
-      <Line />
-      <Story />
-      <Reviews />
-      <Newsletter />
+      <main id="main" tabIndex={-1} style={{ outline: "none" }}>
+        <Hero />
+        <Marquee />
+        <ProductFeature />
+        <Ritual />
+        <Ingredients />
+        <Line />
+        <Story />
+        <Reviews />
+        <Newsletter />
+      </main>
       <Footer />
     </>
   );

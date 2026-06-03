@@ -1,7 +1,10 @@
-// Generates public/products.html (Snipcart price-validation page) AND injects
-// Product JSON-LD into index.html, both from src/content.ts.
-// Snipcart's crawler reads products.html (plain HTML, no JS), so it must be
-// regenerated whenever products change. Runs automatically before `vite build`.
+// Build-time generator (runs before `vite build`). From src/content.ts it produces:
+//   - public/products.html              (legacy combined Snipcart validation page)
+//   - public/products/<id>.html         (per-product SEO landing + price-validation page)
+//   - public/sitemap.xml                (home + product pages + legal pages)
+//   - injects Product JSON-LD into index.html between the LD-PRODUCTS markers
+// Product pages are keyless (no Snipcart key) so they're safe to commit; they carry a
+// hidden snipcart-add-item div that Snipcart crawls (data-item-url points at the page).
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
@@ -9,13 +12,17 @@ import { dirname, resolve } from "node:path";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
 const SITE = (process.env.VITE_SITE_URL || "https://thegypsi.com").replace(/\/$/, "");
+const today = new Date().toISOString().slice(0, 10);
+
+// Static (hand-authored) pages to include in the sitemap.
+// Legal pages are noindex DRAFTS for now — add them here once the owner finalizes the copy.
+const LEGAL_PAGES = [];
 
 // --- Extract the top-level `line: [ ... ]` array from the TS content module ---
-// Anchor to the top-level `line:` key (newline + indent), not a substring of "headline:".
 const src = readFileSync(resolve(root, "src/content.ts"), "utf8");
 const keyMatch = src.match(/\n\s*line\s*:\s*\[/);
 if (!keyMatch) throw new Error("gen-products: could not find the `line` array in src/content.ts");
-const open = keyMatch.index + keyMatch[0].length - 1; // index of the opening "["
+const open = keyMatch.index + keyMatch[0].length - 1;
 let depth = 0;
 let end = open;
 for (let i = open; i < src.length; i++) {
@@ -31,18 +38,17 @@ for (let i = open; i < src.length; i++) {
 if (depth !== 0) throw new Error("gen-products: unbalanced brackets in the `line` array");
 const arrText = src.slice(open, end + 1);
 
-// --- Split the array into top-level {...} objects (string- and nesting-aware,
-//     so a future nested sub-object won't be mistaken for a product) ---
+// --- Split into top-level {...} objects (string- and nesting-aware) ---
 function splitTopLevelObjects(text) {
   const objs = [];
-  let depth = 0;
+  let d = 0;
   let start = -1;
   let inStr = false;
   let strCh = "";
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (inStr) {
-      if (c === "\\") i++; // skip escaped char
+      if (c === "\\") i++;
       else if (c === strCh) inStr = false;
       continue;
     }
@@ -50,11 +56,11 @@ function splitTopLevelObjects(text) {
       inStr = true;
       strCh = c;
     } else if (c === "{") {
-      if (depth === 0) start = i;
-      depth++;
+      if (d === 0) start = i;
+      d++;
     } else if (c === "}") {
-      depth--;
-      if (depth === 0 && start >= 0) {
+      d--;
+      if (d === 0 && start >= 0) {
         objs.push(text.slice(start, i + 1));
         start = -1;
       }
@@ -63,8 +69,7 @@ function splitTopLevelObjects(text) {
   return objs;
 }
 
-// --- Parse each product object. Keys are anchored to an object-key boundary
-//     ({ or ,) so a field like `uid` cannot shadow `id`. ---
+// --- Parse each product. Keys anchored to an object-key boundary ({ or ,). ---
 const products = splitTopLevelObjects(arrText).map((o) => {
   const getStr = (k) => {
     const mm = o.match(new RegExp('[{,]\\s*' + k + '\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"'));
@@ -80,6 +85,7 @@ const products = splitTopLevelObjects(arrText).map((o) => {
     type: getStr("type"),
     price: getNum("price"),
     img: getStr("img"),
+    tag: getStr("tag") || "",
   };
 });
 
@@ -90,7 +96,7 @@ for (const p of products) {
   if (!p.id || !p.name || !p.img) {
     throw new Error(`gen-products: product is missing id/name/img: ${JSON.stringify(p)}`);
   }
-  if (!(typeof p.price === "number") || !Number.isFinite(p.price) || p.price <= 0) {
+  if (!Number.isFinite(p.price) || p.price <= 0) {
     throw new Error(`gen-products: product "${p.id}" has an invalid price (${p.price}). Refusing to emit $0.00.`);
   }
   if (ids.has(p.id)) throw new Error(`gen-products: duplicate product id "${p.id}"`);
@@ -103,24 +109,22 @@ const esc = (s) =>
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
-
 const absImg = (img) => (/^https?:\/\//.test(img) ? img : SITE + img);
+const money = (n) => "$" + n.toFixed(0);
+const pageUrl = (p) => `/products/${p.id}.html`;
 
-// --- products.html (Snipcart price validation; absolute image URLs) ---
-const items = products
-  .map(
-    (p) =>
-      `  <div class="snipcart-add-item"\n` +
-      `       data-item-id="${esc(p.id)}"\n` +
-      `       data-item-name="${esc(p.name)}"\n` +
-      `       data-item-price="${p.price.toFixed(2)}"\n` +
-      `       data-item-url="/products.html"\n` +
-      `       data-item-image="${esc(absImg(p.img))}"\n` +
-      `       data-item-description="${esc(p.type)}"></div>`
-  )
-  .join("\n");
+// snipcart-add-item attributes; data-item-url points at the product's own page.
+const snipAttrs = (p) =>
+  `class="snipcart-add-item"\n` +
+  `       data-item-id="${esc(p.id)}"\n` +
+  `       data-item-name="${esc(p.name)}"\n` +
+  `       data-item-price="${p.price.toFixed(2)}"\n` +
+  `       data-item-url="${esc(pageUrl(p))}"\n` +
+  `       data-item-image="${esc(absImg(p.img))}"\n` +
+  `       data-item-description="${esc(p.type)}"`;
 
-const html = `<!doctype html>
+// --- Legacy combined validation page (kept for back-compat; noindex) ---
+const combined = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -128,20 +132,137 @@ const html = `<!doctype html>
   <title>The Gypsi — product definitions</title>
 </head>
 <body>
-  <!-- AUTO-GENERATED from src/content.ts by scripts/gen-products.mjs. Do not edit by hand.
-       Snipcart reads this page to validate product prices at checkout. -->
+  <!-- AUTO-GENERATED from src/content.ts by scripts/gen-products.mjs. Do not edit by hand. -->
   <div hidden>
-${items}
+${products.map((p) => `  <div ${snipAttrs(p)}></div>`).join("\n")}
   </div>
 </body>
 </html>
 `;
-
 mkdirSync(resolve(root, "public"), { recursive: true });
-writeFileSync(resolve(root, "public/products.html"), html);
+writeFileSync(resolve(root, "public/products.html"), combined);
 
-// --- Product JSON-LD injected into index.html between markers ---
-// Note: no aggregateRating (review counts/ratings are not yet substantiated).
+// --- Shared compact brand CSS for static pages ---
+const BRAND_CSS = `
+  :root{color-scheme:only light;--sand:#f3efe6;--ink:#2a3326;--ink-soft:#4c5743;--ink-mute:#565d4c;--line:#cdc4b0;--moss:#586a44;--card:#fbf9f3}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--sand);color:var(--ink);font-family:"Jost",system-ui,sans-serif;font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 clamp(20px,5vw,48px)}
+  header{border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .mark{font-family:"Jost",sans-serif;letter-spacing:.34em;text-transform:uppercase;font-size:1.05rem}
+  .eyebrow{font-family:"Jost",sans-serif;font-weight:400;font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:var(--ink-mute)}
+  main{padding:48px 0 80px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,5vw,64px);align-items:center}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .pimg{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:3px;display:block;border:1px solid var(--line)}
+  h1{font-family:"Jost",sans-serif;font-weight:300;letter-spacing:.06em;font-size:clamp(2rem,4vw,3rem);margin:.4em 0 .2em}
+  .price{font-family:"Jost",sans-serif;font-size:1.5rem;letter-spacing:.06em;margin:0 0 18px}
+  .desc{color:var(--ink-soft);font-size:1.05rem;max-width:46ch}
+  .btn{display:inline-flex;align-items:center;gap:10px;margin-top:26px;padding:15px 30px;border-radius:999px;background:var(--ink);color:var(--sand);border:1px solid var(--ink);font-family:"Jost",sans-serif;font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;cursor:pointer;transition:background .3s,color .3s}
+  .btn:hover{background:var(--moss);border-color:var(--moss)}
+  .back{display:inline-block;margin-top:22px;font-size:.8rem;letter-spacing:.06em;color:var(--ink-mute)}
+  footer{border-top:1px solid var(--line);padding:28px 0;color:var(--ink-mute);font-size:.78rem}
+`;
+
+const productPage = (p) => {
+  const ld = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: p.name,
+    image: absImg(p.img),
+    description: p.type,
+    brand: { "@type": "Brand", name: "The Gypsi" },
+    offers: {
+      "@type": "Offer",
+      price: p.price.toFixed(2),
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: SITE + pageUrl(p),
+    },
+  };
+  const webp = p.img.replace(/\.jpe?g$/i, ".webp");
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${esc(p.name)} — The Gypsi</title>
+  <meta name="description" content="${esc(p.name)} — ${esc(p.type)} by The Gypsi. Clean, botanical skincare." />
+  <link rel="canonical" href="${esc(SITE + pageUrl(p))}" />
+  <meta name="theme-color" content="#34412c" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="product" />
+  <meta property="og:title" content="${esc(p.name)} — The Gypsi" />
+  <meta property="og:description" content="${esc(p.type)}" />
+  <meta property="og:image" content="${esc(absImg(p.img))}" />
+  <meta property="og:url" content="${esc(SITE + pageUrl(p))}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="${esc(absImg(p.img))}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>
+  <style>${BRAND_CSS}</style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="mark" href="/">THE GYPSI</a>
+      <a class="eyebrow" href="/#line">All products</a>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="grid">
+      <picture>
+        <source srcset="${esc(webp)}" type="image/webp" />
+        <img class="pimg" src="${esc(p.img)}" alt="${esc(p.name)}" width="1024" height="1280" />
+      </picture>
+      <div>
+        <p class="eyebrow">${p.tag ? esc(p.tag) + " · " : ""}${esc(p.type)}</p>
+        <h1>${esc(p.name)}</h1>
+        <p class="price">${money(p.price)}</p>
+        <p class="desc">A clean, botanical formula made in small batches — part of The Gypsi ritual.</p>
+        <!-- Hidden item for Snipcart price validation (Snipcart crawls this page). -->
+        <div hidden ${snipAttrs(p)}></div>
+        <a class="btn" href="/#line">Shop the collection</a>
+        <br /><a class="back" href="/#line">← Back to all products</a>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div class="wrap">© 2026 The Gypsi. All rights reserved.</div>
+  </footer>
+</body>
+</html>
+`;
+};
+
+mkdirSync(resolve(root, "public/products"), { recursive: true });
+for (const p of products) {
+  writeFileSync(resolve(root, `public/products/${p.id}.html`), productPage(p));
+}
+
+// --- Sitemap: home + product pages + legal pages ---
+const urls = [
+  { loc: SITE + "/", priority: "1.0", changefreq: "weekly" },
+  ...products.map((p) => ({ loc: SITE + pageUrl(p), priority: "0.8", changefreq: "weekly" })),
+  ...LEGAL_PAGES.map((u) => ({ loc: SITE + u, priority: "0.3", changefreq: "yearly" })),
+];
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls
+  .map(
+    (u) =>
+      `  <url>\n    <loc>${u.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${u.changefreq}</changefreq>\n    <priority>${u.priority}</priority>\n  </url>`
+  )
+  .join("\n")}
+</urlset>
+`;
+writeFileSync(resolve(root, "public/sitemap.xml"), sitemap);
+
+// --- Homepage Product JSON-LD injected into index.html between markers ---
 const graph = products.map((p) => ({
   "@type": "Product",
   name: p.name,
@@ -153,26 +274,24 @@ const graph = products.map((p) => ({
     price: p.price.toFixed(2),
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
-    url: SITE + "/",
+    url: SITE + pageUrl(p),
   },
 }));
 const ld =
   `<script type="application/ld+json">\n` +
   JSON.stringify({ "@context": "https://schema.org", "@graph": graph }, null, 2).replace(/</g, "\\u003c") +
   `\n    </script>`;
-
 const indexPath = resolve(root, "index.html");
 let indexHtml = readFileSync(indexPath, "utf8");
 const begin = "<!-- LD-PRODUCTS-BEGIN -->";
 const stop = "<!-- LD-PRODUCTS-END -->";
 if (indexHtml.includes(begin) && indexHtml.includes(stop)) {
-  indexHtml = indexHtml.replace(
-    new RegExp(`${begin}[\\s\\S]*?${stop}`),
-    `${begin}\n    ${ld}\n    ${stop}`
-  );
+  indexHtml = indexHtml.replace(new RegExp(`${begin}[\\s\\S]*?${stop}`), `${begin}\n    ${ld}\n    ${stop}`);
   writeFileSync(indexPath, indexHtml);
 } else {
   console.warn("gen-products: LD-PRODUCTS markers not found in index.html — skipped JSON-LD injection.");
 }
 
-console.log(`Wrote public/products.html and injected Product JSON-LD for ${products.length} products.`);
+console.log(
+  `gen-products: ${products.length} products → products.html, public/products/*.html, sitemap.xml, homepage JSON-LD.`
+);

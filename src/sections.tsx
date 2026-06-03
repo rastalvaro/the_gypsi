@@ -315,9 +315,6 @@ export function ProductFeature() {
                 {added ? "Added ✦" : "Add to Bag"}
               </Button>
               <div className="flex items-center" style={{ gap: 8, color: "var(--color-ink-mute)", fontSize: ".82rem" }}>
-                <span aria-hidden="true" style={{ color: "var(--color-tan)", display: "inline-flex", width: 15 }}>
-                  {ICON.star}
-                </span>
                 {f.rating}
               </div>
             </div>
@@ -420,16 +417,18 @@ function ProductCard({ p, delay }: { p: (typeof content.line)[number]; delay: nu
     <Reveal delay={delay}>
       <div className="flex flex-col" style={{ gap: 14 }}>
         <div className="card-media relative">
-          <picture>
-            <source srcSet={webp(p.img)} type="image/webp" />
-            <img
-              src={p.img}
-              alt={p.name}
-              loading="lazy"
-              decoding="async"
-              style={{ aspectRatio: "3/4", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
-            />
-          </picture>
+          <a href={`/products/${p.id}.html`} aria-label={`View ${p.name}`}>
+            <picture>
+              <source srcSet={webp(p.img)} type="image/webp" />
+              <img
+                src={p.img}
+                alt={p.name}
+                loading="lazy"
+                decoding="async"
+                style={{ aspectRatio: "3/4", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
+              />
+            </picture>
+          </a>
           {p.tag && (
             <span
               className="absolute"
@@ -465,7 +464,11 @@ function ProductCard({ p, delay }: { p: (typeof content.line)[number]; delay: nu
         </div>
         <div className="flex justify-between items-baseline" style={{ gap: 12 }}>
           <div style={{ flex: "1 1 auto", minWidth: 0 }}>
-            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 400, letterSpacing: ".06em", fontSize: "1rem", lineHeight: 1.25, margin: "0 0 4px" }}>{p.name}</h3>
+            <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 400, letterSpacing: ".06em", fontSize: "1rem", lineHeight: 1.25, margin: "0 0 4px" }}>
+              <a href={`/products/${p.id}.html`} style={{ color: "inherit" }}>
+                {p.name}
+              </a>
+            </h3>
             <p style={{ color: "var(--color-ink-mute)", fontSize: ".8rem", margin: 0 }}>{p.type}</p>
           </div>
           <span className="display" style={{ fontSize: "1rem", letterSpacing: ".04em", flex: "0 0 auto" }}>
@@ -535,7 +538,7 @@ export function Reviews() {
       <div className="wrap">
         <Reveal>
           <h2 className="eyebrow" style={{ textAlign: "center", margin: "0 0 46px" }}>
-            Loved in 40+ countries
+            From our community
           </h2>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: "clamp(20px,3vw,40px)" }}>
@@ -609,7 +612,7 @@ export function Newsletter() {
         <Reveal delay={200}>
           {done ? (
             <p role="status" aria-live="polite" className="display" style={{ letterSpacing: ".16em", fontSize: "1rem" }}>
-              Welcome to The Gypsi ✦ check your inbox
+              Welcome to The Gypsi ✦ use code WELCOME15 for 15% off your first order
             </p>
           ) : (
             <form

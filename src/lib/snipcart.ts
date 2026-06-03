@@ -2,7 +2,8 @@ import type { Product } from "../types";
 
 /**
  * Snipcart "add to cart" attributes for a product button.
- * Price is validated by Snipcart against /products.html (generated at build).
+ * Price is validated by Snipcart against each product's page,
+ * /products/<id>.html (generated from content.ts at build time).
  */
 export function snip(p: Product): Record<string, string> {
   return {
@@ -10,7 +11,7 @@ export function snip(p: Product): Record<string, string> {
     "data-item-id": p.id,
     "data-item-name": p.name,
     "data-item-price": Number(p.price).toFixed(2),
-    "data-item-url": "/products.html",
+    "data-item-url": `/products/${p.id}.html`,
     "data-item-image": (import.meta.env.VITE_SITE_URL ?? "") + p.img,
     "data-item-description": p.type,
   };

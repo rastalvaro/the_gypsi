@@ -19,9 +19,9 @@ export const content: SiteContent = {
 
   marquee: [
     "Cold-pressed botanicals",
-    "Vegan & cruelty-free",
+    "Plant-based formulas",
     "Recyclable glass",
-    "Dermatologist-tested",
+    "Kind to sensitive skin",
     "Made in small batches",
   ],
 
@@ -36,13 +36,13 @@ export const content: SiteContent = {
   },
 
   feature: {
-    lede: "Twenty-one botanicals suspended in cold-pressed marula. It firms, brightens and floods skin with weightless moisture — the glow people mistake for a filter.",
+    lede: "Twenty-one botanicals suspended in cold-pressed marula. It helps skin look firmer and brighter while flooding it with weightless moisture — the glow people mistake for a filter.",
     bullets: [
-      "Visibly firmer in 21 days",
-      "Plant bio-retinol, zero irritation",
+      "Skin looks firmer and smoother",
+      "Plant-derived bio-retinol, gentle on skin",
       "Absorbs in seconds, no residue",
     ],
-    rating: "4.9 · 2,400+ reviews",
+    rating: "A community favorite",
   },
 
   ritualSection: {
@@ -81,7 +81,7 @@ export const content: SiteContent = {
 
   footer: {
     tagline:
-      "Clean, botanical skincare for the beautifully unbothered. Made in small batches, never tested on anyone but us.",
+      "Clean, botanical skincare for the beautifully unbothered. Made in small batches, never tested on animals.",
     columns: [
       {
         heading: "Shop",
@@ -104,20 +104,20 @@ export const content: SiteContent = {
       },
       {
         heading: "Care",
-        // TODO(owner): add a contact email (mailto:) and real policy/FAQ/tracking pages.
+        // TODO(owner): add a contact email (mailto:) and a Track-order link (Snipcart customer portal).
         links: [
           { label: "Contact", href: "#newsletter" },
-          { label: "Shipping & returns", href: "#" },
-          { label: "FAQ", href: "#" },
+          { label: "Shipping & returns", href: "/shipping-returns.html" },
+          { label: "FAQ", href: "/faq.html" },
           { label: "Track order", href: "#" },
         ],
       },
     ],
-    // TODO(owner): replace with real profile URLs and a Privacy page.
+    // TODO(owner): replace Instagram/TikTok with real profile URLs.
     social: [
       { label: "Instagram", href: "#" },
       { label: "TikTok", href: "#" },
-      { label: "Privacy", href: "#" },
+      { label: "Privacy", href: "/privacy.html" },
     ],
     copyright: "© 2026 The Gypsi. All rights reserved.",
   },
@@ -130,7 +130,7 @@ export const content: SiteContent = {
   ],
 
   ingredients: [
-    { name: "Sea Fennel", role: "Bio-retinol", note: "Smooths & firms without irritation." },
+    { name: "Sea Fennel", role: "Bio-retinol", note: "Smooths & firms, gentle on skin." },
     { name: "Marula Oil", role: "Omega-rich", note: "Deep, weightless nourishment." },
     { name: "Kakadu Plum", role: "Vitamin C", note: "Brightens & evens tone." },
     { name: "Blue Tansy", role: "Calming", note: "Soothes redness overnight." },
@@ -151,8 +151,8 @@ export const content: SiteContent = {
   ],
 
   reviews: [
-    { q: "Three weeks in and strangers ask what I'm doing differently. It's this.", a: "Maya R.", loc: "Lisbon", r: 5 },
-    { q: "The only serum that never made my sensitive skin flare. It just glows.", a: "Teagan W.", loc: "Byron Bay", r: 5 },
+    { q: "Strangers keep asking what I'm doing differently. It's this.", a: "Maya R.", loc: "Lisbon", r: 5 },
+    { q: "So gentle on my sensitive skin — it just glows.", a: "Teagan W.", loc: "Byron Bay", r: 5 },
     { q: "Smells like a holiday and absorbs in seconds. I'm on my fourth bottle.", a: "Noor A.", loc: "Marseille", r: 5 },
   ],
 };

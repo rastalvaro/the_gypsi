@@ -21,10 +21,12 @@
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
     # CSP allows our own bundle, inline styles (the design uses many style={}),
-    # JSON-LD, Google Fonts, and Snipcart. Snipcart needs 'unsafe-eval' (it
-    # compiles validators via new Function) and pulls cart fonts from
-    # fonts.bunny.net. Add your payment provider's domains here when you pick one.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.snipcart.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net https://cdn.snipcart.com; font-src 'self' https://fonts.gstatic.com https://fonts.bunny.net https://cdn.snipcart.com; img-src 'self' data: https:; connect-src 'self' https://*.snipcart.com https://cdn.snipcart.com; frame-src https://*.snipcart.com; form-action 'self'; base-uri 'self'; object-src 'none'"
+    # JSON-LD, and Snipcart. App fonts are self-hosted ('self' covers /fonts/);
+    # the only external font/style host left is Snipcart's (cdn.snipcart.com +
+    # fonts.bunny.net for the cart UI). Snipcart needs 'unsafe-eval' (it compiles
+    # validators via new Function). Add your payment provider's domains here when
+    # you pick one.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.snipcart.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://cdn.snipcart.com; font-src 'self' https://fonts.bunny.net https://cdn.snipcart.com; img-src 'self' data: https:; connect-src 'self' https://*.snipcart.com https://cdn.snipcart.com; frame-src https://*.snipcart.com; form-action 'self'; base-uri 'self'; object-src 'none'"
 
 # Hashed build assets — safe to cache forever.
 [[headers]]
@@ -37,3 +39,17 @@
   for = "/img/*"
   [headers.values]
     Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+# Self-hosted woff2 — content is stable per (family,style,subset) name; cache a year.
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# fonts.css is the regenerable @font-face index linked by the static product/legal
+# pages — short cache so a font refresh reaches returning visitors (the more-specific
+# rule overrides the broad /fonts/* one above).
+[[headers]]
+  for = "/fonts/fonts.css"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"

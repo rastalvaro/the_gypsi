@@ -24,24 +24,65 @@ Forms**. A build step also generates **per-product SEO pages** and a **sitemap**
 
 ## How it boots
 
-`index.html` → `src/main.tsx` imports `index.css`, calls `initSnipcart()`, renders
-`<ErrorBoundary><App/></ErrorBoundary>` in `<StrictMode>`. `App.tsx` puts a **skip link** first,
-then `<Nav/>`, wraps the page sections in `<main id="main" tabIndex={-1}>`, and `<Footer/>`
+`index.html` → `src/main.tsx` imports `index.css`, calls `initSnipcart()`, then **hydrates**
+`<StrictMode><ErrorBoundary><App/></ErrorBoundary></StrictMode>` into `#root` — `hydrateRoot` when
+`#root` already has the prerendered markup (production build), `createRoot` when it's empty (`npm
+run dev`, no prerender step). The homepage HTML is **prerendered at build** (see below) so content
+ships in the HTML; `src/entry-server.tsx` is the server-render entry. `App.tsx` puts a **skip link**
+first, then `<Nav/>`, wraps the page sections in `<main id="main" tabIndex={-1}>`, and `<Footer/>`
 outside `main`. All sections read from the single `content` object in `src/content.ts`.
+
+**Hydration rule:** `App` and everything it renders must produce **identical, deterministic output
+on server and client first render** — all `window`/`document`/`IntersectionObserver`/scroll/locale
+access stays inside `useEffect`/handlers (never in module scope or the render body), and initial
+`useState` values are browser-independent constants. Breaking this causes a hydration mismatch.
 
 ## Content model
 
 - **`src/content.ts`** is the single source of truth for all copy/products/prices/photos,
   typed by **`src/types.ts`**. This is the file to edit for content changes.
 - Footer `columns[].links` and `social` are `{ label, href }[]` (so links have real targets).
-- Images live in `public/img/`, referenced as `/img/<file>`. **Every photo has a `.jpeg` +
-  a `.webp` sibling**; components render `<picture><source webp/><img jpeg/></picture>`.
+- Images live in `public/img/` as **JPEG masters** (`/img/<name>.jpeg`, the `<img>` fallback +
+  OG/Snipcart image). `scripts/gen-images.mjs` generates **responsive AVIF + WebP width variants**
+  (`/img/<name>-<w>.{avif,webp}`, latin width ladders) — all **committed** (run `npm run gen:images`
+  after changing a photo; needs `magick` + `avifenc`). Photos render via the shared **`<Picture>`**
+  helper (`src/components/Picture.tsx` for React; an inline equivalent in `gen-products.mjs` for the
+  SEO pages) → `<picture>` AVIF→WebP→JPEG with `srcset`/`sizes`. See the "Images pipeline" section.
 - Exactly one product in `content.line` should have `featured: true` (fills the large serum
   block). Product `id` must be unique, lowercase, no spaces (React key + Snipcart id + page URL).
 
-## Build pipeline — `scripts/gen-products.mjs`
+## Build pipeline
 
-Runs **before** `vite build` (the `build` script is `node scripts/gen-products.mjs && vite build`).
+`build` is a four-stage chain:
+
+```
+node scripts/gen-products.mjs        # 1. generate product pages/sitemap + inject homepage JSON-LD
+&& vite build                        # 2. client bundle → dist/ (incl. dist/index.html, empty #root)
+&& vite build --ssr src/entry-server.tsx --outDir dist-ssr   # 3. compile the server-render entry
+&& node scripts/prerender.mjs        # 4. render <App/> → inject into dist/index.html's #root
+```
+
+Order is load-bearing: gen-products **mutates the source `index.html`** (JSON-LD) so it must run
+before `vite build` copies it to `dist/`; prerender needs **both** `dist/index.html` (target) and
+`dist-ssr/entry-server.js` (renderer) to exist. `dist-ssr/` is **gitignored build scratch outside
+the published `dist/`** — never deployed. Each `&&` halts the deploy on a non-zero exit.
+
+### `scripts/prerender.mjs` (stage 4)
+
+Imports the compiled `dist-ssr/entry-server.js`, calls `render()` (= `renderToString(<App/>)`),
+and **string-injects** the result into the empty `<div id="root"></div>` in `dist/index.html` (via a
+function-replacement so prices like `$68` aren't mangled by `$`-patterns). Fails the build loudly if:
+the root marker is missing, the render is suspiciously small, expected copy markers are absent, or
+`VITE_SITE_URL` (resolved via Vite's `loadEnv`, so it matches what `vite build` inlined — **not**
+bare `process.env`, which `.env` doesn't populate) is set yet `data-item-image` URLs are relative.
+That last check is an env-parity guard: both vite builds share one `npm run build` env, so the
+prerendered Snipcart attrs match the client bundle.
+`src/entry-server.tsx` renders **bare `<App/>`** (no StrictMode/ErrorBoundary — both emit zero DOM,
+so output matches the client and a render error fails the build instead of silently shipping the
+fallback), and must **not** import `index.css` or call `initSnipcart()` (it'd touch `document`).
+
+### `scripts/gen-products.mjs` (stage 1)
+
 It parses the `line` array out of `content.ts` textually (nesting/string-aware splitter +
 key-boundary-anchored field matching) and **validates** (price > 0, unique non-empty ids) —
 failing loudly rather than shipping `$0.00`. From that it generates:
@@ -88,8 +129,16 @@ failing loudly rather than shipping `$0.00`. From that it generates:
 
 ## SEO & accessibility (keep these)
 
-- `index.html` head: canonical, full OG/Twitter, Organization + WebSite JSON-LD, `<noscript>`
-  fallback, `apple-touch-icon.png`, `site.webmanifest`, hero `<link rel=preload>`.
+- `index.html` head: canonical, full OG/Twitter, Organization + WebSite JSON-LD,
+  `apple-touch-icon.png`, `site.webmanifest`, hero `<link rel=preload>`.
+- **No-JS:** the homepage is prerendered, so no-JS visitors and crawlers get the full DOM. Since
+  `.reveal` starts at `opacity:0` (JS fades it in), a `<noscript><style>.reveal{opacity:1…}</style>`
+  block in `<head>` forces that content visible when JS is off (inert when JS runs, so the
+  scroll-reveal animation is unchanged). This replaced the old `<noscript>` marketing text block.
+  Note: for **JS users** the prerendered text still sits at `opacity:0` until hydration runs the
+  reveal effects (the hero *image* and layout paint immediately — it's outside `.reveal`). So the
+  prerender's wins are SEO + no-JS + image-LCP; instant text paint for JS users would require
+  changing the reveal animation (a visual decision — measure with Lighthouse first).
 - A11y baked into `src/index.css` + components: `--color-ink-mute` is darkened to pass **WCAG AA**
   contrast; global `:focus-visible` ring; `.skip-link` + `.sr-only` + focusable `<main>`;
   `.icon-btn` 44px targets; ARIA on the mobile menu (`aria-expanded`/`aria-controls`), cart,
@@ -111,6 +160,47 @@ failing loudly rather than shipping `$0.00`. From that it generates:
 - Sections use Tailwind utilities for layout/responsive and inline styles + CSS vars for brand
   colors/gradients (preserves exact visual fidelity). Keep `color-scheme: only light` in `:root`.
 
+## Fonts (self-hosted)
+
+- **Jost** + **Cormorant Garamond** are self-hosted (no render-blocking Google Fonts request).
+  Both are **variable fonts**, so `fetch-fonts.mjs` dedupes by source URL → **6 woff2** in
+  `public/fonts/` (one per family×style×subset, latin + latin-ext; each shared across weights, e.g.
+  `jost-normal-latin.woff2` serves 300/400/500). It generates the `@font-face` rules (one per
+  weight/style/subset, all pointing at the deduped files) into two places: the React app's
+  `src/index.css` (between `/* FONTS-BEGIN/END */`, bundled — no extra request on the homepage)
+  **and** `public/fonts/fonts.css` (linked by the static product & legal pages). The script asserts
+  full coverage and fails loudly if Google's css2 output drifts.
+- The above-the-fold **`jost-normal-latin.woff2`** is `<link rel=preload as=font crossorigin>`'d in
+  `index.html`, the product-page template (`gen-products.mjs`), and the legal pages (one preload —
+  the variable file covers every Jost weight). All faces use `font-display: swap`. **Never hand-edit**
+  the woff2 set or the generated `@font-face` blocks — re-run `fetch-fonts.mjs` (re-downloads from
+  Google, clears stale woff2, rewrites both targets).
+- CSP (`netlify.toml`) no longer allows `fonts.googleapis.com`/`fonts.gstatic.com` — `'self'`
+  covers `/fonts/`. The only external font/style host left is Snipcart's (`fonts.bunny.net` +
+  `cdn.snipcart.com`). woff2 are cached 1yr; `fonts.css` gets a short cache (it's the regenerable
+  index). If you add a font, keep all pages in sync (app CSS + `fonts.css`).
+
+## Images pipeline
+
+- **Masters:** one optimized JPEG per photo in `public/img/<name>.jpeg` (committed). These are the
+  `<img>` fallback for the ~3% of browsers without AVIF/WebP, plus the OG/Snipcart `data-item-image`.
+- **Variants:** `scripts/gen-images.mjs` (run manually via `npm run gen:images`, **not** in the build
+  — Netlify's image isn't guaranteed to have `avifenc`) emits AVIF (`avifenc`, cq-tuned: dark hero 37,
+  products 32) + WebP (`magick`, `webp:method=6`) at per-image width ladders (shrink-only, never
+  upscale), to `/img/<name>-<w>.{avif,webp}`, **committed** like the old webp siblings. It clears stale
+  variants, fails loudly on a missing master, and warns if AVIF > WebP or if a `content.ts` photo has
+  no ladder. Ladders are uniform per role: hero `[360,480,660]`, products `[320,512,768,1000]`,
+  campaign/story `[400,640,1000]`.
+- **Render:** the pure, SSR-safe `<Picture>` helper (`src/components/Picture.tsx`) emits
+  `<picture>` AVIF→WebP→JPEG with `srcset`+`sizes`; the JPEG master is the `<img src>`. Pass
+  `width`/`height` for uncropped images (hero, story) and rely on CSS `aspect-ratio` (no width/height)
+  for the cropped card/feature images — both keep CLS at 0. `gen-products.mjs` emits the same markup
+  (string form) for the per-product SEO pages.
+- **The `widths` passed to `<Picture>`/`gen-products` MUST match a ladder `gen-images` produced**, or
+  the largest `srcset` entries 404 (the `<img>` JPEG still renders). The hero LCP preload in
+  `index.html` is a responsive AVIF `imagesrcset`/`imagesizes` mirroring the hero `<picture>` —
+  keep its widths in sync too.
+
 ## Deploy
 
 - `netlify.toml`: `command = "npm run build"`, `publish = "dist"`, SPA redirect + headers.
@@ -120,12 +210,20 @@ failing loudly rather than shipping `$0.00`. From that it generates:
 
 - **No typecheck/lint in `vite build`** — run `npm run typecheck && npm run lint` before
   committing; CI also enforces them.
+- **Prerender/hydration:** keep the render path deterministic & SSR-safe (see "How it boots"). After
+  changing `App`/sections, `npm run build` and confirm `prerender:` injects (it asserts loudly), and
+  watch the browser console for hydration warnings. Keep `src/entry-server.tsx` minimal (bare
+  `<App/>`, no CSS import, no `initSnipcart`). The empty `<div id="root"></div>` in `index.html` is
+  the prerender injection target — don't pre-fill it.
 - **Tailwind 4 = no JS config**; add/rename tokens in `@theme` in `src/index.css`.
 - **Generated, never hand-edited:** `public/products.html`, `public/products/*.html`,
   `public/sitemap.xml`, and the JSON-LD between the `index.html` LD markers.
 - **One featured product; unique lowercase ids** (also the per-product page filename).
-- **Images:** keep a `.webp` sibling per photo; keep hero/og as real optimized JPEG (not PNG).
-  Re-encode with ImageMagick (`magick`) / `avifenc` (both available locally).
+- **Images:** edit photos = replace the JPEG master in `public/img/` then run `npm run gen:images`
+  (regenerates + commits the AVIF/WebP width variants); render only via the `<Picture>` helper. Keep
+  the per-role `widths`/`sizes` in `sections.tsx` + `gen-products.mjs` in sync with the `gen-images`
+  ladders, and the hero preload (`index.html` `imagesrcset`) in sync with the hero widths. Hero is
+  capped at its 660px source (no upscaling) — a higher-res hero master is an owner TODO.
 - **Keep `color-scheme: only light`** and the a11y utilities.
 - **No router yet** (single page + static product/legal pages). For real client routes add
   `react-router-dom` and keep the `netlify.toml` SPA redirect.

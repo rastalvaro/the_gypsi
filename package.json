@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "gen:images": "node scripts/gen-images.mjs",
     "gen:products": "node scripts/gen-products.mjs",
-    "build": "node scripts/gen-products.mjs && vite build",
+    "build": "node scripts/gen-products.mjs && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

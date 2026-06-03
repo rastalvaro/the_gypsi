@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 import { content } from "./content";
 import { Reveal, Button, Ring, Wordmark } from "./components/ui";
+import { Picture } from "./components/Picture";
 import { ICON } from "./components/icons";
 import { snip } from "./lib/snipcart";
 
 const money = (n: number) => "$" + n.toFixed(0);
-/** Sibling WebP path for a /img/*.jpeg source (generated at build/asset time). */
-const webp = (src: string) => src.replace(/\.jpe?g$/i, ".webp");
+// Responsive image ladders/sizes (must match scripts/gen-images.mjs output).
+const PRODUCT_WIDTHS = [320, 512, 768, 1000];
+// sizes cap their top slice in px because .wrap maxes at 1280 — an unbounded vw would
+// over-serve (download a too-large variant) on wide/4K screens. Caps are ≥ the true
+// column width at the breakpoint, so they never under-serve (blur).
+const CARD_SIZES = "(min-width: 1280px) 270px, (min-width: 1024px) 23vw, (min-width: 640px) 47vw, 92vw";
+const FEATURE_SIZES = "(min-width: 1280px) 540px, (min-width: 768px) 45vw, 100vw";
 
 /* ===================== NAV ===================== */
 export function Nav() {
@@ -112,19 +118,17 @@ export function Hero() {
       className="relative flex items-end overflow-hidden"
       style={{ minHeight: "100svh", color: "#f3efe6", background: "#1a2114" }}
     >
-      <picture>
-        <source srcSet={webp(h.image)} type="image/webp" />
-        <img
-          src={h.image}
-          alt="A model with luminous, glowing skin — The Gypsi botanical skincare"
-          width={660}
-          height={1537}
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 w-full h-full"
-          style={{ objectFit: "cover", objectPosition: "50% 45%" }}
-        />
-      </picture>
+      <Picture
+        src={h.image}
+        alt="A model with luminous, glowing skin — The Gypsi botanical skincare"
+        widths={[360, 480, 660]}
+        sizes="100vw"
+        width={660}
+        height={1537}
+        eager
+        className="absolute inset-0 w-full h-full"
+        style={{ objectFit: "cover", objectPosition: "50% 45%" }}
+      />
       <div
         className="absolute inset-0"
         style={{ background: "linear-gradient(180deg, rgba(18,24,14,.55) 0%, rgba(18,24,14,.05) 28%, rgba(18,24,14,.12) 55%, rgba(15,20,11,.82) 100%)" }}
@@ -266,16 +270,13 @@ export function ProductFeature() {
     <section id="serum" className="section" style={{ background: "var(--color-sand-deep)" }}>
       <div className="wrap grid grid-cols-1 md:grid-cols-2 items-center" style={{ gap: "clamp(32px, 6vw, 80px)" }}>
         <Reveal className="order-1 md:order-none">
-          <picture>
-            <source srcSet={webp(p.img)} type="image/webp" />
-            <img
-              src={p.img}
-              alt={p.name}
-              loading="lazy"
-              decoding="async"
-              style={{ aspectRatio: "4/5", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
-            />
-          </picture>
+          <Picture
+            src={p.img}
+            alt={p.name}
+            widths={PRODUCT_WIDTHS}
+            sizes={FEATURE_SIZES}
+            style={{ aspectRatio: "4/5", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
+          />
         </Reveal>
         <div>
           <Reveal>
@@ -418,16 +419,13 @@ function ProductCard({ p, delay }: { p: (typeof content.line)[number]; delay: nu
       <div className="flex flex-col" style={{ gap: 14 }}>
         <div className="card-media relative">
           <a href={`/products/${p.id}.html`} aria-label={`View ${p.name}`}>
-            <picture>
-              <source srcSet={webp(p.img)} type="image/webp" />
-              <img
-                src={p.img}
-                alt={p.name}
-                loading="lazy"
-                decoding="async"
-                style={{ aspectRatio: "3/4", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
-              />
-            </picture>
+            <Picture
+              src={p.img}
+              alt={p.name}
+              widths={PRODUCT_WIDTHS}
+              sizes={CARD_SIZES}
+              style={{ aspectRatio: "3/4", width: "100%", objectFit: "cover", borderRadius: 2, display: "block" }}
+            />
           </a>
           {p.tag && (
             <span
@@ -488,18 +486,16 @@ export function Story() {
       <div className="wrap grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] items-center" style={{ gap: "clamp(30px,5vw,70px)" }}>
         <Reveal>
           <div style={{ boxShadow: "0 30px 70px -30px rgba(20,28,14,.55)", borderRadius: 3, overflow: "hidden", border: "1px solid var(--color-line)" }}>
-            <picture>
-              <source srcSet={webp(s.image)} type="image/webp" />
-              <img
-                src={s.image}
-                alt="The Gypsi founder sourcing botanical ingredients on her travels"
-                width={1023}
-                height={1537}
-                loading="lazy"
-                decoding="async"
-                style={{ width: "100%", aspectRatio: "1023 / 1537", objectFit: "cover", display: "block" }}
-              />
-            </picture>
+            <Picture
+              src={s.image}
+              alt="The Gypsi founder sourcing botanical ingredients on her travels"
+              widths={[400, 640, 1000]}
+              sizes="(min-width: 1280px) 600px, (min-width: 768px) 46vw, 100vw"
+              width={1023}
+              height={1537}
+              style={{ width: "100%", aspectRatio: "1023 / 1537", objectFit: "cover", display: "block" }}
+            />
+
           </div>
         </Reveal>
         <div>

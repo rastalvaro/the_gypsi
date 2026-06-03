@@ -15,9 +15,8 @@
   <meta property="og:url" content="https://thegypsi.com/products/cleanser.html" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://thegypsi.com/img/product-cleanser.jpeg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/jost-normal-latin.woff2" crossorigin />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Verdant Mask","image":"https://thegypsi.com/img/product-cleanser.jpeg","description":"Botanical Mask · 100ml","brand":{"@type":"Brand","name":"The Gypsi"},"offers":{"@type":"Offer","price":"42.00","priceCurrency":"USD","availability":"https://schema.org/InStock","url":"https://thegypsi.com/products/cleanser.html"}}</script>
   <style>
   :root{color-scheme:only light;--sand:#f3efe6;--ink:#2a3326;--ink-soft:#4c5743;--ink-mute:#565d4c;--line:#cdc4b0;--moss:#586a44;--card:#fbf9f3}
@@ -52,8 +51,9 @@
   <main class="wrap">
     <div class="grid">
       <picture>
-        <source srcset="/img/product-cleanser.webp" type="image/webp" />
-        <img class="pimg" src="/img/product-cleanser.jpeg" alt="Verdant Mask" width="1024" height="1280" />
+        <source type="image/avif" srcset="/img/product-cleanser-320.avif 320w, /img/product-cleanser-512.avif 512w, /img/product-cleanser-768.avif 768w, /img/product-cleanser-1000.avif 1000w" sizes="(min-width: 1100px) 480px, (min-width: 760px) 47vw, 92vw" />
+        <source type="image/webp" srcset="/img/product-cleanser-320.webp 320w, /img/product-cleanser-512.webp 512w, /img/product-cleanser-768.webp 768w, /img/product-cleanser-1000.webp 1000w" sizes="(min-width: 1100px) 480px, (min-width: 760px) 47vw, 92vw" />
+        <img class="pimg" src="/img/product-cleanser.jpeg" alt="Verdant Mask" />
       </picture>
       <div>
         <p class="eyebrow">Botanical Mask · 100ml</p>

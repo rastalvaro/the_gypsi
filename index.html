@@ -15,8 +15,21 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Preload the LCP hero image (WebP) -->
-    <link rel="preload" as="image" href="/img/hero-photo.webp" type="image/webp" fetchpriority="high" />
+    <!-- Preload the LCP hero image. Responsive AVIF preload mirrors the hero <picture>'s
+         AVIF <source> (srcset widths + sizes=100vw) so the browser fetches the exact
+         candidate it will paint — once, early. Intentionally AVIF-only: adding a second
+         type=image/webp preload would make the ~93% of browsers supporting BOTH download
+         the hero twice. Non-AVIF browsers (~5%) skip this and fetch the WebP/JPEG from the
+         <picture> at paint. Keep widths in sync with scripts/gen-images.mjs + the Hero
+         <Picture> in src/sections.tsx. -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      fetchpriority="high"
+      imagesrcset="/img/hero-photo-360.avif 360w, /img/hero-photo-480.avif 480w, /img/hero-photo-660.avif 660w"
+      imagesizes="100vw"
+    />
 
     <!-- Social share (link previews) -->
     <meta property="og:type" content="website" />
@@ -137,26 +150,23 @@
     </script>
     <!-- LD-PRODUCTS-END -->
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Fonts: self-hosted (@font-face in src/index.css, files in public/fonts/) —
+         no render-blocking Google Fonts request. Jost is a variable font (one woff2
+         covers 300/400/500), so preload just the above-the-fold latin file; Cormorant
+         (below the fold) and latin-ext load on demand via font-display: swap. -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/jost-normal-latin.woff2" crossorigin />
 
+    <!-- The homepage is prerendered into #root at build (scripts/prerender.mjs).
+         Sections normally start at .reveal{opacity:0} and fade in via JS; with JS
+         disabled that JS never runs, so force the prerendered content visible.
+         Inert when JS is enabled, so the scroll-reveal animation is unchanged. -->
+    <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
   </head>
   <body>
+    <!-- Prerendered at build into this div (scripts/prerender.mjs); the client
+         hydrates it (src/main.tsx). Kept empty in source so the prerender step has
+         a stable injection target — do not pre-fill it here. -->
     <div id="root"></div>
-
-    <noscript>
-      <div style="max-width: 720px; margin: 0 auto; padding: 56px 24px; font-family: 'Jost', system-ui, sans-serif; color: #2a3326; line-height: 1.7;">
-        <h1>The Gypsi — Clean Botanical Skincare</h1>
-        <p>A single golden drop of cold-pressed botanicals. Real, visible glow — no needles, no compromise.</p>
-        <p>Our line: The Miracle Serum ($68), Verdant Mask ($42), Wanderer's Oil ($54), Moonlit Balm ($48).</p>
-        <p>This site is best experienced with JavaScript enabled — please turn it on to shop and explore.</p>
-      </div>
-    </noscript>
 
     <!-- Static form so Netlify can detect & wire up the newsletter (the React
          form posts to it). See src/sections.tsx → Newsletter. -->

@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+
+# Local archives / leftover scaffolding (not part of the deploy)
+Gypsi.zip
+gypsi-vite/
+*.local
+.env
+.DS_Store
+.vscode/*
+!.vscode/extensions.json

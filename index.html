@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>The Gypsi — Clean Botanical Skincare</title>
+    <meta
+      name="description"
+      content="Clean, botanical skincare born from a journey across the world's wild places. Real, visible glow — no needles, no compromise."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Social share (link previews) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Gypsi — Clean Botanical Skincare" />
+    <meta
+      property="og:description"
+      content="Clean, botanical skincare born from a journey across the world's wild places. Real, visible glow — no needles, no compromise."
+    />
+    <meta property="og:image" content="https://thegypsi.com/og-image.jpg" />
+    <meta property="og:url" content="https://thegypsi.com" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Gypsi — Clean Botanical Skincare" />
+    <meta name="twitter:image" content="https://thegypsi.com/og-image.jpg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
+
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Static form so Netlify can detect & wire up the newsletter (the React
+         form posts to it). See src/sections.tsx → Newsletter. -->
+    <form name="newsletter" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="email" name="email" />
+      <input name="bot-field" />
+    </form>
+
+    <!-- Snipcart settings node. The key is injected at runtime from VITE_SNIPCART_KEY
+         (see src/lib/snipcart.ts). Leave data-api-key empty here. -->
+    <div hidden id="snipcart" data-api-key=""></div>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

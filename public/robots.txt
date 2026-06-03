@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /products.html
+
+Sitemap: https://thegypsi.com/sitemap.xml

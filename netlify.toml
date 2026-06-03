@@ -1,7 +1,25 @@
+# Build / publish for Netlify.
+# Connect this repo (or the gypsi-vite/ subfolder as base) and these settings are picked up.
+
 [build]
-  command = "vite build"
-  publish = "dist/client"
-[dev]
-  command = "npm run dev"
-  targetPort = 3000
-  port = 8888
+  command = "npm run build"
+  publish = "dist"
+
+# SPA-style fallback (single page; keeps deep links working if you add routes later).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Sensible security + caching headers.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

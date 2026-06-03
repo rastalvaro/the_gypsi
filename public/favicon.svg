@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="The Gypsi">
+  <rect width="64" height="64" rx="14" fill="#34412c"></rect>
+  
+  <path d="M32 14c7 6 11 12 11 18a11 11 0 0 1-22 0c0-6 4-12 11-18z" fill="none" stroke="#f3efe6" stroke-width="2.2" stroke-linejoin="round"></path>
+  <path d="M32 24v18" stroke="#c8b79a" stroke-width="2.2" stroke-linecap="round"></path>
+  <path d="M32 31c2.2-1.6 4.4-2 6.2-1.8M32 36c-2.2-1.6-4.4-2-6.2-1.8" stroke="#c8b79a" stroke-width="2" stroke-linecap="round" fill="none"></path>
+</svg>

@@ -1,8 +1,24 @@
 {
   "items": [
-    { "name": "Sea Fennel", "role": "Bio-retinol", "note": "Smooths & firms, gentle on skin." },
-    { "name": "Marula Oil", "role": "Omega-rich", "note": "Deep, weightless nourishment." },
-    { "name": "Kakadu Plum", "role": "Vitamin C", "note": "Brightens & evens tone." },
-    { "name": "Blue Tansy", "role": "Calming", "note": "Soothes redness overnight." }
+    {
+      "name": "Shea Butter",
+      "role": "Natural Lasting Moisture",
+      "note": "Smooths & firms, gentle on skin."
+    },
+    {
+      "name": "Organic Castor Oil",
+      "role": "Rich in Omegas and Vitamin E",
+      "note": "Grows lashes naturally."
+    },
+    {
+      "name": "Organic Carrot Seed Oil",
+      "role": "Rich in Vitamin A, E and Antioxidants",
+      "note": "Brightens, firms & evens tone."
+    },
+    {
+      "name": "Blue Tansy",
+      "role": "Calming",
+      "note": "Soothes redness overnight."
+    }
   ]
 }

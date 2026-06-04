@@ -1,38 +1,83 @@
 {
-  "tagline": "Clean, botanical skincare for the beautifully unbothered. Made in small batches, never tested on animals.",
+  "tagline": "Clean, botanical skincare for that beautiful island look. Made in small batches, never tested on animals.",
+  "copyright": "© 2026 The Gypsi. All rights reserved.",
+  "social": [
+    {
+      "label": "Instagram",
+      "href": "#"
+    },
+    {
+      "label": "TikTok",
+      "href": "#"
+    },
+    {
+      "label": "Privacy",
+      "href": "/privacy.html"
+    }
+  ],
   "columns": [
     {
       "heading": "Shop",
       "links": [
-        { "label": "The Miracle Serum", "href": "#serum" },
-        { "label": "Verdant Mask", "href": "#line" },
-        { "label": "Wanderer's Oil", "href": "#line" },
-        { "label": "Moonlit Balm", "href": "#line" }
+        {
+          "label": "The Miracle Serum",
+          "href": "#serum"
+        },
+        {
+          "label": "Verdant Mask",
+          "href": "#line"
+        },
+        {
+          "label": "Wanderer's Oil",
+          "href": "#line"
+        },
+        {
+          "label": "Moonlit Balm",
+          "href": "#line"
+        }
       ]
     },
     {
       "heading": "About",
       "links": [
-        { "label": "Our story", "href": "#story" },
-        { "label": "Ingredients", "href": "#ingredients" },
-        { "label": "Sustainability", "href": "#" },
-        { "label": "Journal", "href": "#" }
+        {
+          "label": "Our story",
+          "href": "#story"
+        },
+        {
+          "label": "Ingredients",
+          "href": "#ingredients"
+        },
+        {
+          "label": "Sustainability",
+          "href": "#"
+        },
+        {
+          "label": "Journal",
+          "href": "#"
+        }
       ]
     },
     {
       "heading": "Care",
       "links": [
-        { "label": "Contact", "href": "#newsletter" },
-        { "label": "Shipping & returns", "href": "/shipping-returns.html" },
-        { "label": "FAQ", "href": "/faq.html" },
-        { "label": "Track order", "href": "#" }
+        {
+          "label": "Contact",
+          "href": "#newsletter"
+        },
+        {
+          "label": "Shipping & returns",
+          "href": "/shipping-returns.html"
+        },
+        {
+          "label": "FAQ",
+          "href": "/faq.html"
+        },
+        {
+          "label": "Track order",
+          "href": "#"
+        }
       ]
     }
-  ],
-  "social": [
-    { "label": "Instagram", "href": "#" },
-    { "label": "TikTok", "href": "#" },
-    { "label": "Privacy", "href": "/privacy.html" }
-  ],
-  "copyright": "© 2026 The Gypsi. All rights reserved."
+  ]
 }

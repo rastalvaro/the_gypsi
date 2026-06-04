@@ -7,7 +7,8 @@
       "price": 70,
       "img": "/img/product-serum.jpeg",
       "featured": true,
-      "tag": "Bestseller"
+      "tag": "Bestseller",
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
     },
     {
       "id": "face and body butter",
@@ -16,7 +17,8 @@
       "price": 40,
       "img": "/img/product-cleanser.jpeg",
       "featured": false,
-      "tag": ""
+      "tag": "",
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
     },
     {
       "id": "eyelash serum",
@@ -25,7 +27,8 @@
       "price": 25,
       "img": "/img/product-oil.jpeg",
       "featured": false,
-      "tag": ""
+      "tag": "",
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
     },
     {
       "id": "lip butter",
@@ -34,7 +37,8 @@
       "price": 25,
       "img": "/img/product-cream.jpeg",
       "featured": false,
-      "tag": ""
+      "tag": "",
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
     }
   ]
 }

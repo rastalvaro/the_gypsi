@@ -12,7 +12,7 @@ export interface Hero {
 
 export interface Feature {
   /** id of the product shown in the large feature block (the CMS "featured" picker). */
-  featuredId: string;
+  featuredId?: string;
   lede: string;
   bullets: string[];
   rating: string;
@@ -88,6 +88,7 @@ export interface Product {
   featured: boolean;
   /** Badge text, e.g. "Bestseller". Empty string = no badge. */
   tag: string;
+  description: string;
 }
 
 export interface Review {
@@ -96,6 +97,18 @@ export interface Review {
   loc: string;
   /** Star count 1–5. */
   r: number;
+}
+
+export interface SiteGlobal {
+  seoDescription: string;
+  newsletterSuccess: string;
+  newsletterError: string;
+  reviewsHeading: string;
+  storyCta: string;
+  lineCta: string;
+  productAdd: string;
+  productShopCollection: string;
+  productBack: string;
 }
 
 export interface SiteContent {
@@ -114,4 +127,5 @@ export interface SiteContent {
   ritual: RitualStep[];
   line: Product[];
   reviews: Review[];
+  site: SiteGlobal;
 }

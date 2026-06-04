@@ -40,6 +40,10 @@ collections:
                 widget: number
                 value_type: float
                 min: 0.01
+              - label: "Description"
+                name: description
+                widget: text
+                hint: "Detailed product description for the landing page."
               - label: "Image"
                 name: img
                 widget: image
@@ -54,6 +58,93 @@ collections:
   - name: site
     label: "Site Copy"
     files:
+      - name: site_global
+        label: "Global Copy"
+        file: content/site.json
+        fields:
+          - label: "SEO Description"
+            name: seoDescription
+            widget: text
+            hint: "The global meta description used on the homepage and index."
+          - label: "Newsletter Success Message"
+            name: newsletterSuccess
+            widget: string
+          - label: "Newsletter Error Message"
+            name: newsletterError
+            widget: string
+          - label: "Reviews Section Heading"
+            name: reviewsHeading
+            widget: string
+          - label: "Story CTA Button"
+            name: storyCta
+            widget: string
+          - label: "Product Line CTA Button"
+            name: lineCta
+            widget: string
+          - label: "Product Add Button"
+            name: productAdd
+            widget: string
+          - label: "Shop Collection Button"
+            name: productShopCollection
+            widget: string
+          - label: "Back to Products Link"
+            name: productBack
+            widget: string
+
+      - name: nav
+        label: "Navigation"
+        file: content/nav.json
+        fields:
+          - label: "Shop Label"
+            name: shopLabel
+            widget: string
+          - name: links
+            label: "Links"
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { label: Label, name: label, widget: string }
+              - { label: URL, name: href, widget: string }
+
+      - name: sections
+        label: "Section Headings"
+        file: content/sections.json
+        fields:
+          - name: ritualSection
+            label: "Ritual Section"
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: "Heading (Lead)", name: headingLead, widget: string }
+              - { label: "Heading (Highlight)", name: headingHighlight, widget: string }
+          - name: ingredientsSection
+            label: "Ingredients Section"
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: "Heading (Lead)", name: headingLead, widget: string }
+              - { label: "Heading (Highlight)", name: headingHighlight, widget: string }
+              - { label: Body, name: body, widget: text }
+          - name: lineSection
+            label: "Line Section"
+            widget: object
+            fields:
+              - { label: Eyebrow, name: eyebrow, widget: string }
+              - { label: "Heading (Lead)", name: headingLead, widget: string }
+              - { label: "Heading (Highlight)", name: headingHighlight, widget: string }
+
+      - name: benefits
+        label: "Hero Benefits"
+        file: content/benefits.json
+        fields:
+          - name: items
+            label: Benefits
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Icon, name: icon, widget: string, hint: "Check src/components/icons.tsx for available icons like: sparkle, plant, face, shield, leaf" }
+
       - name: hero
         label: "Hero"
         file: content/hero.json
@@ -194,6 +285,7 @@ collections:
             value_field: "items.*.id"
             display_fields: ["items.*.name"]
             search_fields: ["items.*.name"]
+            required: true
             hint: "Which product fills the large feature block near the top of the page."
           - label: Description
             name: lede
@@ -256,3 +348,14 @@ collections:
           - { label: "Tan", name: tan, widget: color }
           - { label: "On-dark (light text on dark sections — keep light)", name: onDark, widget: color }
           - { label: "Hero backdrop (behind hero photo)", name: heroBackdrop, widget: color }
+
+  - name: pages
+    label: "Pages"
+    folder: "content/pages"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: title, widget: string }
+      - { label: "Description", name: description, widget: text, required: false }
+      - { label: "Draft", name: draft, widget: boolean, default: false }
+      - { label: "Body", name: body, widget: markdown }

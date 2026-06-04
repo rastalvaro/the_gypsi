@@ -5,9 +5,10 @@
 //   - injects Product JSON-LD into index.html between the LD-PRODUCTS markers
 // Product pages are keyless (no Snipcart key) so they're safe to commit; they carry a
 // hidden snipcart-add-item div that Snipcart crawls (data-item-url points at the page).
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
+import { dirname, resolve, basename } from "node:path";
+import { Marked } from "marked";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
@@ -20,9 +21,17 @@ const PRODUCT_IMG_WIDTHS = [320, 512, 768, 1000];
 // Top slice capped in px (the .wrap maxes at 1040) so wide screens don't over-serve.
 const PRODUCT_IMG_SIZES = "(min-width: 1100px) 480px, (min-width: 760px) 47vw, 92vw";
 
-// Static (hand-authored) pages to include in the sitemap.
-// Legal pages are noindex DRAFTS for now — add them here once the owner finalizes the copy.
+// Dynamic pages to include in the sitemap.
 const LEGAL_PAGES = [];
+const pagesDir = resolve(root, "content/pages");
+const pageFiles = [];
+try {
+  pageFiles.push(...readdirSync(pagesDir).filter(f => f.endsWith('.json')));
+} catch (e) {
+  // Directory might not exist initially
+}
+
+const siteCopy = JSON.parse(readFileSync(resolve(root, "content/site.json"), "utf8"));
 
 // --- Load products from content/products.json ---
 const products = JSON.parse(readFileSync(resolve(root, "content/products.json"), "utf8")).items;
@@ -109,6 +118,11 @@ const BRAND_CSS = `
   .btn:hover{background:var(--moss);border-color:var(--moss)}
   .back{display:inline-block;margin-top:22px;font-size:.8rem;letter-spacing:.06em;color:var(--ink-mute)}
   footer{border-top:1px solid var(--line);padding:28px 0;color:var(--ink-mute);font-size:.78rem}
+  
+  .legal-content h1{font-size:clamp(2rem,4vw,3rem);margin-bottom:.8em;text-align:center;}
+  .legal-content h2{font-size:1.6rem;margin:1.8em 0 .8em;font-family:"Jost",sans-serif;font-weight:400;}
+  .legal-content p, .legal-content li{color:var(--ink-soft);margin-bottom:1em;font-size:1.05rem;}
+  .legal-content a{color:var(--moss);text-decoration:underline;}
 `;
 
 const productPage = (p) => {
@@ -135,7 +149,7 @@ const productPage = (p) => {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${esc(p.name)} — The Gypsi</title>
-  <meta name="description" content="${esc(p.name)} — ${esc(p.type)} by The Gypsi. Clean, botanical skincare." />
+  <meta name="description" content="${esc(p.description || p.type)}" />
   <link rel="canonical" href="${esc(SITE + pageUrl(p))}" />
   <meta name="theme-color" content="#34412c" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -155,7 +169,7 @@ const productPage = (p) => {
   <header>
     <div class="wrap bar">
       <a class="mark" href="/">THE GYPSI</a>
-      <a class="eyebrow" href="/#line">All products</a>
+      <a class="eyebrow" href="/#line">${esc(siteCopy.lineCta)}</a>
     </div>
   </header>
   <main class="wrap">
@@ -169,11 +183,11 @@ const productPage = (p) => {
         <p class="eyebrow">${p.tag ? esc(p.tag) + " · " : ""}${esc(p.type)}</p>
         <h1>${esc(p.name)}</h1>
         <p class="price">${money(p.price)}</p>
-        <p class="desc">A clean, botanical formula made in small batches — part of The Gypsi ritual.</p>
+        <p class="desc">${esc(p.description || "A clean, botanical formula made in small batches — part of The Gypsi ritual.")}</p>
         <!-- Hidden item for Snipcart price validation (Snipcart crawls this page). -->
         <div hidden ${snipAttrs(p)}></div>
-        <a class="btn" href="/#line">Shop the collection</a>
-        <br /><a class="back" href="/#line">← Back to all products</a>
+        <a class="btn" href="/#line">${esc(siteCopy.productShopCollection)}</a>
+        <br /><a class="back" href="/#line">${esc(siteCopy.productBack)}</a>
       </div>
     </div>
   </main>
@@ -188,6 +202,72 @@ const productPage = (p) => {
 mkdirSync(resolve(root, "public/products"), { recursive: true });
 for (const p of products) {
   writeFileSync(resolve(root, `public/products/${p.id}.html`), productPage(p));
+}
+
+// --- Render Legal Pages ---
+const md = new Marked({ breaks: true, gfm: true });
+md.use({
+  renderer: {
+    html: () => "",
+    link(token) {
+      const inner = this.parser.parseInline(token.tokens);
+      const title = token.title ? ` title="${esc(token.title)}"` : "";
+      const href = token.href ? token.href.trim() : "#";
+      const safeHref = /^(https?:|mailto:|tel:|#|\/)/i.test(href) ? href : "#";
+      return `<a href="${esc(safeHref)}"${title} rel="noopener noreferrer">${inner}</a>`;
+    },
+    image(token) {
+      const title = token.title ? ` title="${esc(token.title)}"` : "";
+      const href = token.href ? token.href.trim() : "#";
+      const safeHref = /^(https?:|mailto:|tel:|#|\/)/i.test(href) ? href : "#";
+      return `<img src="${esc(safeHref)}" alt="${esc(token.text)}"${title} />`;
+    },
+  },
+});
+
+for (const file of pageFiles) {
+  const pageData = JSON.parse(readFileSync(resolve(pagesDir, file), "utf8"));
+  if (pageData.draft) continue;
+  
+  const id = basename(file, ".json");
+  const htmlBody = md.parse(pageData.body || "", { async: false });
+  const desc = pageData.description || siteCopy.seoDescription;
+  
+  const pageHtml = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${esc(pageData.title)} — The Gypsi</title>
+  <meta name="description" content="${esc(desc)}" />
+  <link rel="canonical" href="${esc(SITE + "/" + id + ".html")}" />
+  <meta name="theme-color" content="#34412c" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/jost-normal-latin.woff2" crossorigin />
+  <link rel="stylesheet" href="/fonts/fonts.css" />
+  <style>${BRAND_CSS}</style>
+</head>
+<body>
+  <header>
+    <div class="wrap bar">
+      <a class="mark" href="/">THE GYPSI</a>
+      <a class="eyebrow" href="/#line">${esc(siteCopy.lineCta)}</a>
+    </div>
+  </header>
+  <main class="wrap" style="max-width:800px;margin-top:20px;">
+    <div class="legal-content">
+      <h1>${esc(pageData.title)}</h1>
+      ${htmlBody}
+    </div>
+  </main>
+  <footer>
+    <div class="wrap">© 2026 The Gypsi. All rights reserved.</div>
+  </footer>
+</body>
+</html>`;
+
+  writeFileSync(resolve(root, `public/${id}.html`), pageHtml);
+  LEGAL_PAGES.push(`/${id}.html`);
 }
 
 // --- Sitemap: home + product pages + legal pages ---
@@ -233,10 +313,21 @@ const begin = "<!-- LD-PRODUCTS-BEGIN -->";
 const stop = "<!-- LD-PRODUCTS-END -->";
 if (indexHtml.includes(begin) && indexHtml.includes(stop)) {
   indexHtml = indexHtml.replace(new RegExp(`${begin}[\\s\\S]*?${stop}`), `${begin}\n    ${ld}\n    ${stop}`);
-  writeFileSync(indexPath, indexHtml);
 } else {
   console.warn("gen-products: LD-PRODUCTS markers not found in index.html — skipped JSON-LD injection.");
 }
+
+// Inject SEO Description
+indexHtml = indexHtml.replace(
+  /<meta\s+name="description"\s+content="[^"]*"/,
+  `<meta name="description" content="${esc(siteCopy.seoDescription)}"`
+);
+indexHtml = indexHtml.replace(
+  /<meta\s+property="og:description"\s+content="[^"]*"/,
+  `<meta property="og:description" content="${esc(siteCopy.seoDescription)}"`
+);
+
+writeFileSync(indexPath, indexHtml);
 
 console.log(
   `gen-products: ${products.length} products → products.html, public/products/*.html, sitemap.xml, homepage JSON-LD.`

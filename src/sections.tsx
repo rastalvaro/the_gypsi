@@ -400,7 +400,7 @@ export function Line() {
           </Reveal>
           <Reveal delay={100}>
             <a href="#line" className="link-underline">
-              View all products
+              {content.site.lineCta}
             </a>
           </Reveal>
         </div>
@@ -458,7 +458,7 @@ function ProductCard({ p, delay }: { p: (typeof content.line)[number]; delay: nu
               textTransform: "uppercase",
             }}
           >
-            Add — {money(p.price)}
+            {content.site.productAdd} — {money(p.price)}
           </button>
         </div>
         <div className="flex justify-between items-baseline" style={{ gap: 12 }}>
@@ -517,7 +517,7 @@ export function Story() {
           </Reveal>
           <Reveal delay={220}>
             <Button variant="ghost" href="#story" arrow>
-              Read the journey
+              {content.site.storyCta}
             </Button>
           </Reveal>
         </div>
@@ -533,7 +533,7 @@ export function Reviews() {
       <div className="wrap">
         <Reveal>
           <h2 className="eyebrow" style={{ textAlign: "center", margin: "0 0 46px" }}>
-            From our community
+            {content.site.reviewsHeading}
           </h2>
         </Reveal>
         <div className="grid grid-cols-1 md:grid-cols-3" style={{ gap: "clamp(20px,3vw,40px)" }}>
@@ -581,9 +581,9 @@ export function Newsletter() {
     fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body.toString() })
       .then((res) => {
         if (res.ok) setDone(true);
-        else setError("Something went wrong — please try again.");
+        else setError(content.site.newsletterError);
       })
-      .catch(() => setError("Network error — please try again."));
+      .catch(() => setError(content.site.newsletterError));
   };
 
   return (
@@ -607,7 +607,7 @@ export function Newsletter() {
         <Reveal delay={200}>
           {done ? (
             <p role="status" aria-live="polite" className="display" style={{ letterSpacing: ".16em", fontSize: "1rem" }}>
-              Welcome to The Gypsi ✦ use code WELCOME15 for 15% off your first order
+              {content.site.newsletterSuccess}
             </p>
           ) : (
             <form

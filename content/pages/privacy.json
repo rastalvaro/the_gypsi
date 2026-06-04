@@ -1,0 +1,7 @@
+{
+  "title": "Privacy Policy",
+  "description": "How The Gypsi handles your personal information.",
+  "draft": true,
+  "lastUpdated": "2026-06-04",
+  "body": "The Gypsi (\"we\", \"us\") respects your privacy. This policy explains what we collect, why, and your choices.\n\n## Information we collect\nWhen you place an order, our checkout provider **Snipcart** and our payment processor collect the details needed to fulfil and pay for your order (name, shipping/billing address, email, and payment information — payment data is handled by the processor, not stored by us). When you join our newsletter, we collect your email address via **Netlify Forms**. [TODO: list any analytics or other tools you add.]\n\n## How we use your information\nTo process and ship orders, respond to enquiries, send the emails you opt into, and improve the store. [TODO: confirm.]\n\n## Third parties\nWe share data only as needed with service providers: Snipcart (checkout), [TODO: payment processor], and Netlify (hosting & forms). [TODO: link their privacy policies.]\n\n## Cookies\nSnipcart and checkout use cookies necessary for the cart and payment to function. [TODO: describe any analytics/marketing cookies and a consent mechanism if required in your region.]\n\n## Your rights\nDepending on where you live (e.g. GDPR/UK GDPR, CCPA), you may have the right to access, correct, or delete your data, or opt out of certain processing. To exercise these rights, contact us. [TODO]\n\n## Contact\nQuestions about this policy? Email us at **[TODO: privacy@thegypsi.com]**."
+}

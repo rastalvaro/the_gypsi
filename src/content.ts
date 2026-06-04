@@ -12,6 +12,7 @@ import ingredientsData from "../content/ingredients.json";
 import ritualData from "../content/ritual.json";
 import productsData from "../content/products.json";
 import reviewsData from "../content/reviews.json";
+import site from "../content/site.json";
 
 export const content: SiteContent = {
   hero,
@@ -34,4 +35,5 @@ export const content: SiteContent = {
     featured: p.id === feature.featuredId,
   })),
   reviews: reviewsData.items,
+  site,
 };

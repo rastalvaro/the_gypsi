@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: rastalvaro/the_gypsi
   branch: main
 
 media_folder: public/img

@@ -26,18 +26,19 @@
     # fonts.bunny.net for the cart UI). Snipcart needs 'unsafe-eval' (it compiles
     # validators via new Function). Add your payment provider's domains here when
     # you pick one.
-    # identity.netlify.com added for the conditional invite/recovery redirect script.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.snipcart.com https://identity.netlify.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://cdn.snipcart.com; font-src 'self' https://fonts.bunny.net https://cdn.snipcart.com; img-src 'self' data: https:; connect-src 'self' https://*.snipcart.com https://cdn.snipcart.com; frame-src https://*.snipcart.com; form-action 'self'; base-uri 'self'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.snipcart.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://cdn.snipcart.com; font-src 'self' https://fonts.bunny.net https://cdn.snipcart.com; img-src 'self' data: https:; connect-src 'self' https://*.snipcart.com https://cdn.snipcart.com; frame-src https://*.snipcart.com; form-action 'self'; base-uri 'self'; object-src 'none'"
 
-# Admin CMS — permissive CSP for Sveltia CMS + Netlify Identity + GitHub API.
-# More-specific /admin/* rule takes priority over /* above.
+# Admin CMS — permissive CSP for Sveltia CMS (loaded from unpkg) with the GitHub
+# backend. Sveltia talks to the GitHub API directly; OAuth runs in a popup window
+# (api.netlify.com → github.com), which is top-level navigation, not subject to this
+# page's connect-src/frame-src. More-specific /admin/* rule takes priority over /*.
 [[headers]]
   for = "/admin/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://identity.netlify.com; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://identity.netlify.com https://*.netlify.com; frame-src 'none'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://unpkg.com; frame-src 'none'; object-src 'none'"
 
 # Hashed build assets — safe to cache forever.
 [[headers]]

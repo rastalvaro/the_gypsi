@@ -162,9 +162,9 @@ both the script and `src/types.ts`.
   Snipcart-compatible**: it includes `'unsafe-eval'` (Snipcart compiles validators via
   `new Function`) and `fonts.bunny.net` (Snipcart's cart fonts). **When you add any external
   resource** (analytics, a payment provider, etc.) you must allowlist its domains here.
-- `/admin/*` has its own more-permissive CSP block (allows `unpkg.com` for Sveltia CMS and
-  `api.github.com` / `identity.netlify.com` for the git-gateway auth flow). The more-specific
-  rule takes priority over `/*`.
+- `/admin/*` has its own more-permissive CSP block (allows `unpkg.com` for the Sveltia bundle
+  and `api.github.com` / `raw.githubusercontent.com` for the GitHub backend). The GitHub OAuth
+  popup is top-level navigation, so it needs no CSP entry. The more-specific rule wins over `/*`.
 
 ## Styling
 
@@ -245,11 +245,20 @@ both the script and `src/types.ts`.
 
 ## CMS
 
-- **Sveltia CMS** runs at `thegypsi.com/admin`. Backend: `git-gateway` (Netlify Identity).
-  The owner logs in with email/password; edits commit to `main` and trigger a Netlify rebuild.
-- **One-time setup** (Netlify dashboard): Enable Identity → Enable Git Gateway → Invite user.
-- **Config:** `public/admin/config.yml` defines all editable collections. `public/admin/index.html`
-  loads Sveltia CMS (pinned to a specific version with SRI hashes — update both when upgrading).
+- **Sveltia CMS** runs at `thegypsi.com/admin`. Backend: **`github`** (Sveltia dropped
+  git-gateway / Netlify Identity support — do not use it). Login is GitHub OAuth; the editor
+  needs a GitHub account with write access to `rastalvaro/the_gypsi`. Edits commit to `main`
+  and trigger a Netlify rebuild.
+- **OAuth:** Sveltia uses **Netlify as the OAuth provider by default** (no `base_url` needed,
+  no self-hosted OAuth server) — the same flow Decap used. One-time setup:
+  1. GitHub → Settings → Developer settings → OAuth Apps → New: callback URL
+     `https://api.netlify.com/auth/done`.
+  2. Netlify → Site config → Access control → OAuth → Install provider → GitHub → paste the
+     Client ID + Secret.
+  (Netlify Identity / Git Gateway are no longer used — safe to disable in the Netlify dashboard.)
+- **Config:** `public/admin/config.yml` defines all editable collections + the `backend` block
+  (`repo` is hardcoded — update it if the repo moves). `public/admin/index.html` loads Sveltia
+  from unpkg, pinned to a specific version with an SRI hash — update both when upgrading.
 - **Not exposed in CMS** (edit JSON directly): `nav.json`, `sections.json`, `benefits.json` —
   these contain structural or code-coupled values unlikely to need owner editing.
 
@@ -265,7 +274,8 @@ both the script and `src/types.ts`.
 
 ## Owner TODO (handoff items — content/config, not code)
 
-- **CMS activation:** Netlify dashboard → Identity → Enable → Git Gateway → Enable → Invite user.
+- **CMS activation:** create a GitHub OAuth app (callback `https://api.netlify.com/auth/done`)
+  and register its Client ID/Secret under Netlify → Access control → OAuth. See the CMS section.
 - **Socials:** real Instagram/TikTok URLs (currently `#` placeholders in `content/footer.json`,
   editable via CMS → Footer → Social & legal links). *(not available yet.)*
 - **Contact:** a real email for `mailto:` (footer Contact link in `content/footer.json` +

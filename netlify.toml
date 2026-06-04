@@ -29,16 +29,17 @@
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.snipcart.com; style-src 'self' 'unsafe-inline' https://fonts.bunny.net https://cdn.snipcart.com; font-src 'self' https://fonts.bunny.net https://cdn.snipcart.com; img-src 'self' data: https:; connect-src 'self' https://*.snipcart.com https://cdn.snipcart.com; frame-src https://*.snipcart.com; form-action 'self'; base-uri 'self'; object-src 'none'"
 
 # Admin CMS — permissive CSP for Sveltia CMS (loaded from unpkg) with the GitHub
-# backend. Sveltia talks to the GitHub API directly; OAuth runs in a popup window
-# (api.netlify.com → github.com), which is top-level navigation, not subject to this
-# page's connect-src/frame-src. More-specific /admin/* rule takes priority over /*.
+# backend. Sveltia talks to the GitHub API directly; OAuth runs through the Sveltia
+# auth worker on Cloudflare in a popup window (worker → github.com → worker/callback),
+# which is top-level navigation. The worker origin is in connect-src as a safeguard.
+# More-specific /admin/* rule takes priority over /*.
 [[headers]]
   for = "/admin/*"
   [headers.values]
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://unpkg.com; frame-src 'none'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://unpkg.com https://sveltia-cms-auth.ingdimas.workers.dev; frame-src 'none'; object-src 'none'"
 
 # Hashed build assets — safe to cache forever.
 [[headers]]

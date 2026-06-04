@@ -2,6 +2,7 @@ backend:
   name: github
   repo: rastalvaro/the_gypsi
   branch: main
+  base_url: https://sveltia-cms-auth.ingdimas.workers.dev
 
 media_folder: public/img
 public_folder: /img

@@ -1,0 +1,8 @@
+{
+  "items": [
+    { "name": "Sea Fennel", "role": "Bio-retinol", "note": "Smooths & firms, gentle on skin." },
+    { "name": "Marula Oil", "role": "Omega-rich", "note": "Deep, weightless nourishment." },
+    { "name": "Kakadu Plum", "role": "Vitamin C", "note": "Brightens & evens tone." },
+    { "name": "Blue Tansy", "role": "Calming", "note": "Soothes redness overnight." }
+  ]
+}

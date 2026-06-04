@@ -1,0 +1,9 @@
+{
+  "links": [
+    { "label": "Serum", "href": "#serum" },
+    { "label": "Ritual", "href": "#ritual" },
+    { "label": "The Line", "href": "#line" },
+    { "label": "Story", "href": "#story" }
+  ],
+  "shopLabel": "Shop"
+}

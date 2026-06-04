@@ -1,0 +1,8 @@
+{
+  "items": [
+    { "icon": "noNeedle", "title": "No Needles", "note": "Glow without the clinic" },
+    { "icon": "noBotox", "title": "No Botox", "note": "Movement is beauty" },
+    { "icon": "noHarsh", "title": "No Harsh Treatments", "note": "Kind to your barrier" },
+    { "icon": "leaf", "title": "Nourish Your Skin", "note": "Botanicals, not band-aids" }
+  ]
+}

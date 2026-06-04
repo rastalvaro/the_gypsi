@@ -6,9 +6,10 @@ Context for Claude Code. This is the **production codebase** for The Gypsi store
 
 ## What this is
 
-A single-page botanical-skincare marketing/storefront site. No backend. Content is a typed
-TS module; the store is **Snipcart** (activated via env key); the newsletter is **Netlify
-Forms**. A build step also generates **per-product SEO pages** and a **sitemap**.
+A single-page botanical-skincare marketing/storefront site. No backend. Content lives in
+**`content/*.json` files** (edited via the Sveltia CMS at `/admin/` or directly); the store
+is **Snipcart** (activated via env key); the newsletter is **Netlify Forms**. A build step
+also generates **per-product SEO pages** and a **sitemap**.
 
 ## Stack & scripts
 
@@ -30,7 +31,8 @@ Forms**. A build step also generates **per-product SEO pages** and a **sitemap**
 run dev`, no prerender step). The homepage HTML is **prerendered at build** (see below) so content
 ships in the HTML; `src/entry-server.tsx` is the server-render entry. `App.tsx` puts a **skip link**
 first, then `<Nav/>`, wraps the page sections in `<main id="main" tabIndex={-1}>`, and `<Footer/>`
-outside `main`. All sections read from the single `content` object in `src/content.ts`.
+outside `main`. All sections read from the `content` object exported by `src/content.ts`, which imports
+from `content/*.json`.
 
 **Hydration rule:** `App` and everything it renders must produce **identical, deterministic output
 on server and client first render** — all `window`/`document`/`IntersectionObserver`/scroll/locale
@@ -39,8 +41,17 @@ access stays inside `useEffect`/handlers (never in module scope or the render bo
 
 ## Content model
 
-- **`src/content.ts`** is the single source of truth for all copy/products/prices/photos,
-  typed by **`src/types.ts`**. This is the file to edit for content changes.
+- **`content/*.json`** is the single source of truth for all copy/products/prices/photos.
+  `src/content.ts` is a thin re-export that imports from these files — it is typed by
+  **`src/types.ts`** but is not the file to edit for content changes.
+  The JSON files are edited either via the **Sveltia CMS at `/admin/`** (owner) or directly
+  (developer). The 13 files map one-to-one to content sections:
+  `products.json`, `hero.json`, `marquee.json`, `nav.json`, `feature.json`, `sections.json`
+  (the three section headings), `story.json`, `newsletter.json`, `footer.json`, `benefits.json`,
+  `ingredients.json`, `ritual.json`, `reviews.json`.
+- **Price/CTA coupling:** `hero.json`'s `ctaPrimary` field contains the serum price as plain
+  text (e.g. `"Shop the Serum — $68"`). It is **not** derived from `products.json`. If the
+  serum price changes, update both files.
 - Footer `columns[].links` and `social` are `{ label, href }[]` (so links have real targets).
 - Images live in `public/img/` as **JPEG masters** (`/img/<name>.jpeg`, the `<img>` fallback +
   OG/Snipcart image). `scripts/gen-images.mjs` generates **responsive AVIF + WebP width variants**
@@ -48,6 +59,7 @@ access stays inside `useEffect`/handlers (never in module scope or the render bo
   after changing a photo; needs `magick` + `avifenc`). Photos render via the shared **`<Picture>`**
   helper (`src/components/Picture.tsx` for React; an inline equivalent in `gen-products.mjs` for the
   SEO pages) → `<picture>` AVIF→WebP→JPEG with `srcset`/`sizes`. See the "Images pipeline" section.
+  **Images added via the CMS** will display as JPEG only until `npm run gen:images` is run locally.
 - Exactly one product in `content.line` should have `featured: true` (fills the large serum
   block). Product `id` must be unique, lowercase, no spaces (React key + Snipcart id + page URL).
 
@@ -83,9 +95,8 @@ fallback), and must **not** import `index.css` or call `initSnipcart()` (it'd to
 
 ### `scripts/gen-products.mjs` (stage 1)
 
-It parses the `line` array out of `content.ts` textually (nesting/string-aware splitter +
-key-boundary-anchored field matching) and **validates** (price > 0, unique non-empty ids) —
-failing loudly rather than shipping `$0.00`. From that it generates:
+It reads the `items` array from **`content/products.json`** and **validates** (price > 0,
+unique non-empty ids) — failing loudly rather than shipping `$0.00`. From that it generates:
 
 1. `public/products.html` — legacy combined Snipcart validation page (noindex; back-compat).
 2. **`public/products/<id>.html`** — one per product: branded SEO landing page with canonical,
@@ -97,7 +108,8 @@ failing loudly rather than shipping `$0.00`. From that it generates:
    `<!-- LD-PRODUCTS-BEGIN/END -->` markers (idempotent — safe to re-run).
 
 **Never hand-edit** `public/products.html`, `public/products/*.html`, or `public/sitemap.xml`
-— edit `content.ts` (or the script). If you restructure the `line` shape, update the script.
+— edit `content/products.json` (or the script). If you restructure the product shape, update
+both the script and `src/types.ts`.
 
 ## Store (Snipcart)
 
@@ -150,6 +162,9 @@ failing loudly rather than shipping `$0.00`. From that it generates:
   Snipcart-compatible**: it includes `'unsafe-eval'` (Snipcart compiles validators via
   `new Function`) and `fonts.bunny.net` (Snipcart's cart fonts). **When you add any external
   resource** (analytics, a payment provider, etc.) you must allowlist its domains here.
+- `/admin/*` has its own more-permissive CSP block (allows `unpkg.com` for Sveltia CMS and
+  `api.github.com` / `identity.netlify.com` for the git-gateway auth flow). The more-specific
+  rule takes priority over `/*`.
 
 ## Styling
 
@@ -188,8 +203,8 @@ failing loudly rather than shipping `$0.00`. From that it generates:
   — Netlify's image isn't guaranteed to have `avifenc`) emits AVIF (`avifenc`, cq-tuned: dark hero 37,
   products 32) + WebP (`magick`, `webp:method=6`) at per-image width ladders (shrink-only, never
   upscale), to `/img/<name>-<w>.{avif,webp}`, **committed** like the old webp siblings. It clears stale
-  variants, fails loudly on a missing master, and warns if AVIF > WebP or if a `content.ts` photo has
-  no ladder. Ladders are uniform per role: hero `[360,480,660]`, products `[320,512,768,1000]`,
+  variants, fails loudly on a missing master, and warns if AVIF > WebP or if a photo referenced
+  in `content/` has no ladder. Ladders are uniform per role: hero `[360,480,660]`, products `[320,512,768,1000]`,
   campaign/story `[400,640,1000]`.
 - **Render:** the pure, SSR-safe `<Picture>` helper (`src/components/Picture.tsx`) emits
   `<picture>` AVIF→WebP→JPEG with `srcset`+`sizes`; the JPEG master is the `<img src>`. Pass
@@ -228,20 +243,33 @@ failing loudly rather than shipping `$0.00`. From that it generates:
 - **No router yet** (single page + static product/legal pages). For real client routes add
   `react-router-dom` and keep the `netlify.toml` SPA redirect.
 
+## CMS
+
+- **Sveltia CMS** runs at `thegypsi.com/admin`. Backend: `git-gateway` (Netlify Identity).
+  The owner logs in with email/password; edits commit to `main` and trigger a Netlify rebuild.
+- **One-time setup** (Netlify dashboard): Enable Identity → Enable Git Gateway → Invite user.
+- **Config:** `public/admin/config.yml` defines all editable collections. `public/admin/index.html`
+  loads Sveltia CMS (pinned to a specific version with SRI hashes — update both when upgrading).
+- **Not exposed in CMS** (edit JSON directly): `nav.json`, `sections.json`, `benefits.json` —
+  these contain structural or code-coupled values unlikely to need owner editing.
+
 ## Common tasks
 
-- **Edit content/products/prices:** `src/content.ts` (a rebuild regenerates product pages,
-  sitemap, products.html, and the JSON-LD).
+- **Edit content/products/prices:** edit `content/*.json` directly, or use the CMS at `/admin/`.
+  A rebuild regenerates product pages, sitemap, products.html, and the JSON-LD.
 - **New section:** add a component in `src/sections.tsx`, place it inside `<main>` in `App.tsx`.
+  If it needs editable content, add a new JSON file in `content/` and a collection entry in
+  `public/admin/config.yml`.
 - **Restyle/theme:** tokens at the top of `src/index.css` (`@theme`).
 - **Finalize a legal page:** edit `public/<page>.html`, remove `noindex`, add to `LEGAL_PAGES`.
 
 ## Owner TODO (handoff items — content/config, not code)
 
-- **Socials:** real Instagram/TikTok URLs (currently `#` placeholders in `content.ts`). *(not
-  available yet.)*
-- **Contact:** a real email for `mailto:` (footer Contact + the legal pages' `[TODO]`s) and a
-  Track-order link (Snipcart customer portal).
+- **CMS activation:** Netlify dashboard → Identity → Enable → Git Gateway → Enable → Invite user.
+- **Socials:** real Instagram/TikTok URLs (currently `#` placeholders in `content/footer.json`,
+  editable via CMS → Footer → Social & legal links). *(not available yet.)*
+- **Contact:** a real email for `mailto:` (footer Contact link in `content/footer.json` +
+  the legal pages' `[TODO]`s) and a Track-order link (Snipcart customer portal).
 - **Legal/FAQ:** finalize `public/{privacy,shipping-returns,faq}.html`, then index + add to sitemap.
 - **Discount:** create the `WELCOME15` discount in Snipcart.
 - **Products:** per-product INCI ingredient lists.

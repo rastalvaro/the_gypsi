@@ -1,0 +1,224 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: public/img
+public_folder: /img
+
+locale: en
+
+collections:
+  - name: products
+    label: Products
+    files:
+      - name: product_list
+        label: Products
+        file: content/products.json
+        fields:
+          - name: items
+            label: Products
+            widget: list
+            summary: "{{fields.name}} — ${{fields.price}}"
+            fields:
+              - label: "ID"
+                name: id
+                widget: string
+                hint: "Unique, lowercase, no spaces. Never change after the product goes live — it's the cart ID and page URL."
+              - label: "Name"
+                name: name
+                widget: string
+              - label: "Type"
+                name: type
+                widget: string
+                hint: "e.g. Face Serum · 30ml"
+              - label: "Price (USD)"
+                name: price
+                widget: number
+                value_type: float
+                min: 0.01
+              - label: "Image"
+                name: img
+                widget: image
+                hint: "Upload a JPEG. Responsive image variants are generated separately — the JPEG will display on its own until then."
+              - label: "Featured (large display near top)"
+                name: featured
+                widget: boolean
+                default: false
+                hint: "Only one product should be featured at a time."
+              - label: "Badge"
+                name: tag
+                widget: string
+                required: false
+                default: ""
+                hint: "e.g. Bestseller — leave blank for no badge"
+
+  - name: site
+    label: "Site Copy"
+    files:
+      - name: hero
+        label: "Hero"
+        file: content/hero.json
+        fields:
+          - label: Eyebrow
+            name: eyebrow
+            widget: string
+          - label: Headline
+            name: headline
+            widget: text
+            hint: "Use a new line for each line of the big title"
+          - label: Lede
+            name: lede
+            widget: text
+          - label: "Primary button text"
+            name: ctaPrimary
+            widget: string
+          - label: "Secondary button text"
+            name: ctaSecondary
+            widget: string
+          - label: "Hero image"
+            name: image
+            widget: image
+
+      - name: story
+        label: "Founder Story"
+        file: content/story.json
+        fields:
+          - label: Eyebrow
+            name: eyebrow
+            widget: string
+          - label: "Quote (opening text)"
+            name: quoteLead
+            widget: text
+          - label: "Quote (highlighted word/phrase)"
+            name: quoteHighlight
+            widget: string
+          - label: "Quote (closing punctuation)"
+            name: quoteTail
+            widget: string
+          - label: "Body text"
+            name: body
+            widget: text
+          - label: Image
+            name: image
+            widget: image
+
+      - name: newsletter
+        label: "Newsletter Section"
+        file: content/newsletter.json
+        fields:
+          - label: Eyebrow
+            name: eyebrow
+            widget: string
+          - label: Heading
+            name: heading
+            widget: string
+          - label: Body
+            name: body
+            widget: text
+
+      - name: reviews
+        label: "Customer Reviews"
+        file: content/reviews.json
+        fields:
+          - name: items
+            label: Reviews
+            widget: list
+            summary: "{{fields.a}} — {{fields.loc}}"
+            fields:
+              - label: Quote
+                name: q
+                widget: text
+              - label: "Author name"
+                name: a
+                widget: string
+              - label: Location
+                name: loc
+                widget: string
+              - label: "Stars (1–5)"
+                name: r
+                widget: number
+                value_type: int
+                min: 1
+                max: 5
+                default: 5
+
+      - name: footer
+        label: "Footer"
+        file: content/footer.json
+        fields:
+          - label: Tagline
+            name: tagline
+            widget: text
+          - label: Copyright
+            name: copyright
+            widget: string
+          - name: social
+            label: "Social & legal links"
+            widget: list
+            summary: "{{fields.label}}"
+            fields:
+              - { label: Label, name: label, widget: string }
+              - { label: URL, name: href, widget: string }
+          - name: columns
+            label: "Footer columns"
+            widget: list
+            summary: "{{fields.heading}}"
+            fields:
+              - { label: Heading, name: heading, widget: string }
+              - name: links
+                label: Links
+                widget: list
+                summary: "{{fields.label}}"
+                fields:
+                  - { label: Label, name: label, widget: string }
+                  - { label: URL, name: href, widget: string }
+
+      - name: marquee
+        label: "Scrolling ticker"
+        file: content/marquee.json
+        fields:
+          - name: items
+            label: Items
+            widget: list
+            field: { label: Item, name: item, widget: string }
+
+      - name: feature
+        label: "Featured product copy"
+        file: content/feature.json
+        fields:
+          - label: Description
+            name: lede
+            widget: text
+          - name: bullets
+            label: "Benefit bullets"
+            widget: list
+            field: { label: Bullet, name: bullet, widget: string }
+          - label: "Rating text"
+            name: rating
+            widget: string
+
+      - name: ingredients
+        label: "Key Ingredients"
+        file: content/ingredients.json
+        fields:
+          - name: items
+            label: Ingredients
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { label: Name, name: name, widget: string }
+              - { label: Role, name: role, widget: string }
+              - { label: Note, name: note, widget: string }
+
+      - name: ritual
+        label: "Ritual Steps"
+        file: content/ritual.json
+        fields:
+          - name: items
+            label: Steps
+            widget: list
+            summary: "{{fields.n}} {{fields.t}}"
+            fields:
+              - { label: Number, name: n, widget: string, hint: "e.g. 01, 02, 03, 04" }
+              - { label: Title, name: t, widget: string }
+              - { label: Description, name: d, widget: text }

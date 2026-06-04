@@ -1,4 +1,4 @@
-// Build-time generator (runs before `vite build`). From src/content.ts it produces:
+// Build-time generator (runs before `vite build`). From content/products.json it produces:
 //   - public/products.html              (legacy combined Snipcart validation page)
 //   - public/products/<id>.html         (per-product SEO landing + price-validation page)
 //   - public/sitemap.xml                (home + product pages + legal pages)
@@ -24,76 +24,8 @@ const PRODUCT_IMG_SIZES = "(min-width: 1100px) 480px, (min-width: 760px) 47vw, 9
 // Legal pages are noindex DRAFTS for now — add them here once the owner finalizes the copy.
 const LEGAL_PAGES = [];
 
-// --- Extract the top-level `line: [ ... ]` array from the TS content module ---
-const src = readFileSync(resolve(root, "src/content.ts"), "utf8");
-const keyMatch = src.match(/\n\s*line\s*:\s*\[/);
-if (!keyMatch) throw new Error("gen-products: could not find the `line` array in src/content.ts");
-const open = keyMatch.index + keyMatch[0].length - 1;
-let depth = 0;
-let end = open;
-for (let i = open; i < src.length; i++) {
-  if (src[i] === "[") depth++;
-  else if (src[i] === "]") {
-    depth--;
-    if (depth === 0) {
-      end = i;
-      break;
-    }
-  }
-}
-if (depth !== 0) throw new Error("gen-products: unbalanced brackets in the `line` array");
-const arrText = src.slice(open, end + 1);
-
-// --- Split into top-level {...} objects (string- and nesting-aware) ---
-function splitTopLevelObjects(text) {
-  const objs = [];
-  let d = 0;
-  let start = -1;
-  let inStr = false;
-  let strCh = "";
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
-    if (inStr) {
-      if (c === "\\") i++;
-      else if (c === strCh) inStr = false;
-      continue;
-    }
-    if (c === '"' || c === "'" || c === "`") {
-      inStr = true;
-      strCh = c;
-    } else if (c === "{") {
-      if (d === 0) start = i;
-      d++;
-    } else if (c === "}") {
-      d--;
-      if (d === 0 && start >= 0) {
-        objs.push(text.slice(start, i + 1));
-        start = -1;
-      }
-    }
-  }
-  return objs;
-}
-
-// --- Parse each product. Keys anchored to an object-key boundary ({ or ,). ---
-const products = splitTopLevelObjects(arrText).map((o) => {
-  const getStr = (k) => {
-    const mm = o.match(new RegExp('[{,]\\s*' + k + '\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"'));
-    return mm ? mm[1].replace(/\\"/g, '"') : null;
-  };
-  const getNum = (k) => {
-    const mm = o.match(new RegExp("[{,]\\s*" + k + "\\s*:\\s*([0-9]+(?:\\.[0-9]+)?)"));
-    return mm ? Number(mm[1]) : null;
-  };
-  return {
-    id: getStr("id"),
-    name: getStr("name"),
-    type: getStr("type"),
-    price: getNum("price"),
-    img: getStr("img"),
-    tag: getStr("tag") || "",
-  };
-});
+// --- Load products from content/products.json ---
+const products = JSON.parse(readFileSync(resolve(root, "content/products.json"), "utf8")).items;
 
 // --- Validate: fail loudly rather than ship $0.00 / broken Snipcart items ---
 if (products.length === 0) throw new Error("gen-products: parsed 0 products from src/content.ts");

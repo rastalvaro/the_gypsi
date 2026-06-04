@@ -161,6 +161,32 @@
          disabled that JS never runs, so force the prerendered content visible.
          Inert when JS is enabled, so the scroll-reveal animation is unchanged. -->
     <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
+
+    <!-- Netlify Identity invite/recovery redirect. Only loads the identity widget
+         when the URL hash contains an auth token (invite_token, confirmation_token,
+         recovery_token) — i.e. only when the admin clicks their email link.
+         Regular visitors pay zero cost. -->
+    <script>
+      (function () {
+        var h = window.location.hash;
+        if (h.indexOf("invitation_token") !== -1 || h.indexOf("confirmation_token") !== -1 || h.indexOf("recovery_token") !== -1) {
+          var s = document.createElement("script");
+          s.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
+          s.integrity = "sha384-dy2tW8xkhLIj8lZR42MCwZhhDb2cCewZiw0uA65CMpdHiJzL+iubx7HzHcCXU2rW";
+          s.crossOrigin = "anonymous";
+          s.onload = function () {
+            window.netlifyIdentity.on("init", function (user) {
+              if (!user) {
+                window.netlifyIdentity.on("login", function () {
+                  document.location.href = "/admin/";
+                });
+              }
+            });
+          };
+          document.head.appendChild(s);
+        }
+      })();
+    </script>
   </head>
   <body>
     <!-- Prerendered at build into this div (scripts/prerender.mjs); the client

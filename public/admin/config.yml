@@ -4,6 +4,8 @@ backend:
   branch: main
   base_url: https://sveltia-cms-auth.ingdimas.workers.dev
 
+local_backend: true
+
 media_folder: public/img
 public_folder: /img
 

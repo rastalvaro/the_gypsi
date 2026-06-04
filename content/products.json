@@ -1,35 +1,39 @@
 {
   "items": [
     {
-      "id": "serum",
-      "name": "The Miracle Serum1",
-      "type": "Face Serum · 30ml",
-      "price": 68,
+      "id": "mask",
+      "name": "The Mask",
+      "type": "Face Mask · 2 oz",
+      "price": 70,
       "img": "/img/product-serum.jpeg",
+      "featured": true,
       "tag": "Bestseller"
     },
     {
-      "id": "cleanser",
-      "name": "Verdant Mask",
-      "type": "Botanical Mask · 100ml",
-      "price": 42,
+      "id": "face and body butter",
+      "name": "The Face and Body Butter",
+      "type": "Moisturizer · 16 oz",
+      "price": 40,
       "img": "/img/product-cleanser.jpeg",
+      "featured": false,
       "tag": ""
     },
     {
-      "id": "oil",
-      "name": "Wanderer's Oil",
-      "type": "Face Oil · 30ml",
-      "price": 54,
+      "id": "eyelash serum",
+      "name": "The Eyelash Serum",
+      "type": "Eyelash Moisture & Growth · 2 oz",
+      "price": 25,
       "img": "/img/product-oil.jpeg",
+      "featured": false,
       "tag": ""
     },
     {
-      "id": "cream",
-      "name": "Moonlit Balm",
-      "type": "Night Balm · 50ml",
-      "price": 48,
+      "id": "lip butter",
+      "name": "The Lip Butter",
+      "type": "Lip Moisturizer · 2 oz",
+      "price": 25,
       "img": "/img/product-cream.jpeg",
+      "featured": false,
       "tag": ""
     }
   ]

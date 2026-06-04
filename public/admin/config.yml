@@ -42,11 +42,6 @@ collections:
                 name: img
                 widget: image
                 hint: "Upload a JPEG. Responsive image variants are generated separately — the JPEG will display on its own until then."
-              - label: "Featured (large display near top)"
-                name: featured
-                widget: boolean
-                default: false
-                hint: "Only one product should be featured at a time."
               - label: "Badge"
                 name: tag
                 widget: string
@@ -99,7 +94,8 @@ collections:
             widget: string
           - label: "Body text"
             name: body
-            widget: text
+            widget: markdown
+            hint: "Supports **bold**, *italic*, and [links](https://…). Raw HTML is ignored."
           - label: Image
             name: image
             widget: image
@@ -188,6 +184,15 @@ collections:
         label: "Featured product copy"
         file: content/feature.json
         fields:
+          - label: "Featured product"
+            name: featuredId
+            widget: relation
+            collection: products
+            file: product_list
+            value_field: "items.*.id"
+            display_fields: ["items.*.name"]
+            search_fields: ["items.*.name"]
+            hint: "Which product fills the large feature block near the top of the page."
           - label: Description
             name: lede
             widget: text
@@ -224,3 +229,26 @@ collections:
               - { label: Number, name: n, widget: string, hint: "e.g. 01, 02, 03, 04" }
               - { label: Title, name: t, widget: string }
               - { label: Description, name: d, widget: text }
+
+  - name: theme
+    label: "Theme / Colors"
+    files:
+      - name: palette
+        label: "Brand Palette"
+        file: content/theme.json
+        # A color edit here commits theme.json; the Netlify build regenerates the
+        # CSS, so changes go live on the next deploy. Mind contrast — text colors
+        # (ink/ink-mute) must stay dark enough on the sand backgrounds for WCAG AA.
+        fields:
+          - { label: "Sand (page background)", name: sand, widget: color }
+          - { label: "Sand deep (alt background)", name: sandDeep, widget: color }
+          - { label: "Sand deeper (deep background)", name: sandDeeper, widget: color }
+          - { label: "Card", name: card, widget: color }
+          - { label: "Ink (main text)", name: ink, widget: color }
+          - { label: "Ink soft (secondary text)", name: inkSoft, widget: color }
+          - { label: "Ink mute (muted text — keep AA-contrast)", name: inkMute, widget: color }
+          - { label: "Line (hairlines/borders)", name: line, widget: color }
+          - { label: "Forest", name: forest, widget: color }
+          - { label: "Sage", name: sage, widget: color }
+          - { label: "Moss (accent)", name: moss, widget: color }
+          - { label: "Tan", name: tan, widget: color }

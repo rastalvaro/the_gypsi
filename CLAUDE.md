@@ -45,10 +45,11 @@ access stays inside `useEffect`/handlers (never in module scope or the render bo
   `src/content.ts` is a thin re-export that imports from these files — it is typed by
   **`src/types.ts`** but is not the file to edit for content changes.
   The JSON files are edited either via the **Sveltia CMS at `/admin/`** (owner) or directly
-  (developer). The 13 files map one-to-one to content sections:
+  (developer). The files map one-to-one to content sections:
   `products.json`, `hero.json`, `marquee.json`, `nav.json`, `feature.json`, `sections.json`
   (the three section headings), `story.json`, `newsletter.json`, `footer.json`, `benefits.json`,
-  `ingredients.json`, `ritual.json`, `reviews.json`.
+  `ingredients.json`, `ritual.json`, `reviews.json`, plus **`theme.json`** (brand color palette —
+  see "Theme / colors").
 - **Price/CTA coupling:** `hero.json`'s `ctaPrimary` field contains the serum price as plain
   text (e.g. `"Shop the Serum — $68"`). It is **not** derived from `products.json`. If the
   serum price changes, update both files.
@@ -60,22 +61,32 @@ access stays inside `useEffect`/handlers (never in module scope or the render bo
   helper (`src/components/Picture.tsx` for React; an inline equivalent in `gen-products.mjs` for the
   SEO pages) → `<picture>` AVIF→WebP→JPEG with `srcset`/`sizes`. See the "Images pipeline" section.
   **Images added via the CMS** will display as JPEG only until `npm run gen:images` is run locally.
-- Exactly one product in `content.line` should have `featured: true` (fills the large serum
-  block). Product `id` must be unique, lowercase, no spaces (React key + Snipcart id + page URL).
+- **Featured product:** chosen by `feature.featuredId` (a CMS `relation` picker), not a per-product
+  flag. `content.ts` derives each product's `featured` boolean from it (`p.id === feature.featuredId`,
+  falling back to the first product), so there's one source of truth. Product `id` must be unique,
+  lowercase, no spaces (React key + Snipcart id + page URL).
+- **Markdown:** `story.body` is authored as markdown (CMS `markdown` widget) and rendered by the
+  SSR-safe `<Markdown>` helper (`src/components/Markdown.tsx`, uses `marked`). Raw HTML is dropped
+  and link/image URLs are protocol-restricted there (no DOM sanitizer — keeps the Node build light;
+  content is trusted-editor authored). To render markdown elsewhere, reuse `<Markdown>` + the
+  `.rich` CSS class.
 
 ## Build pipeline
 
-`build` is a four-stage chain:
+`build` is a five-stage chain:
 
 ```
-node scripts/gen-products.mjs        # 1. generate product pages/sitemap + inject homepage JSON-LD
+node scripts/gen-theme.mjs           # 0. write content/theme.json palette → src/index.css @theme
+&& node scripts/gen-products.mjs     # 1. generate product pages/sitemap + inject homepage JSON-LD
 && vite build                        # 2. client bundle → dist/ (incl. dist/index.html, empty #root)
 && vite build --ssr src/entry-server.tsx --outDir dist-ssr   # 3. compile the server-render entry
 && node scripts/prerender.mjs        # 4. render <App/> → inject into dist/index.html's #root
 ```
 
-Order is load-bearing: gen-products **mutates the source `index.html`** (JSON-LD) so it must run
-before `vite build` copies it to `dist/`; prerender needs **both** `dist/index.html` (target) and
+Order is load-bearing: gen-theme **mutates `src/index.css`** (the `@theme` color tokens) so it must
+run before `vite build`/Tailwind compiles the CSS; gen-products **mutates the source `index.html`**
+(JSON-LD) so it must run before `vite build` copies it to `dist/`; prerender needs **both**
+`dist/index.html` (target) and
 `dist-ssr/entry-server.js` (renderer) to exist. `dist-ssr/` is **gitignored build scratch outside
 the published `dist/`** — never deployed. Each `&&` halts the deploy on a non-zero exit.
 
@@ -174,6 +185,14 @@ both the script and `src/types.ts`.
   `.ring`, `.marquee`) and the a11y utilities above.
 - Sections use Tailwind utilities for layout/responsive and inline styles + CSS vars for brand
   colors/gradients (preserves exact visual fidelity). Keep `color-scheme: only light` in `:root`.
+- **Theme / colors:** the 12 brand color tokens in the `@theme` block live between the
+  `/* THEME-COLORS-BEGIN/END */` markers and are **generated from `content/theme.json`** by
+  `scripts/gen-theme.mjs` (build stage 0 + `npm run dev`). Editing colors in the CMS commits
+  `theme.json`; the build rewrites the tokens, Tailwind recompiles utilities **and** `--color-*`
+  vars, and `gen-products.mjs` reads the same `theme.json` for the static product pages' palette.
+  **Never hand-edit between the markers** — change `theme.json` (or the script) and rebuild. The
+  CMS only commits `theme.json`, so a committed `src/index.css` can lag until the next build/dev
+  (self-healing). Mind WCAG AA contrast when changing `ink`/`ink-mute` on the sand backgrounds.
 
 ## Fonts (self-hosted)
 
@@ -232,7 +251,8 @@ both the script and `src/types.ts`.
   the prerender injection target — don't pre-fill it.
 - **Tailwind 4 = no JS config**; add/rename tokens in `@theme` in `src/index.css`.
 - **Generated, never hand-edited:** `public/products.html`, `public/products/*.html`,
-  `public/sitemap.xml`, and the JSON-LD between the `index.html` LD markers.
+  `public/sitemap.xml`, the JSON-LD between the `index.html` LD markers, and the `@theme` color
+  tokens between the `THEME-COLORS` markers in `src/index.css` (from `content/theme.json`).
 - **One featured product; unique lowercase ids** (also the per-product page filename).
 - **Images:** edit photos = replace the JPEG master in `public/img/` then run `npm run gen:images`
   (regenerates + commits the AVIF/WebP width variants); render only via the `<Picture>` helper. Keep
@@ -270,6 +290,10 @@ both the script and `src/types.ts`.
 - **Config:** `public/admin/config.yml` defines all editable collections + the `backend` block
   (`repo` is hardcoded — update it if the repo moves). `public/admin/index.html` loads Sveltia
   from unpkg, pinned to a specific version with an SRI hash — update both when upgrading.
+- **Collections:** `Products`, `Site Copy` (hero/story/newsletter/reviews/footer/marquee/feature/
+  ingredients/ritual), and `Theme / Colors` (the palette). Notable widgets: the featured product
+  is a `relation` picker on `feature.json`; `story.body` is a `markdown` widget; the palette uses
+  `color` widgets.
 - **Not exposed in CMS** (edit JSON directly): `nav.json`, `sections.json`, `benefits.json` —
   these contain structural or code-coupled values unlikely to need owner editing.
 
@@ -280,7 +304,9 @@ both the script and `src/types.ts`.
 - **New section:** add a component in `src/sections.tsx`, place it inside `<main>` in `App.tsx`.
   If it needs editable content, add a new JSON file in `content/` and a collection entry in
   `public/admin/config.yml`.
-- **Restyle/theme:** tokens at the top of `src/index.css` (`@theme`).
+- **Restyle/theme colors:** edit `content/theme.json` (or the CMS "Theme / Colors") — `gen-theme`
+  writes them into `src/index.css`'s `@theme`. Non-color tokens (fonts, spacing) stay hand-edited
+  in `@theme`.
 - **Finalize a legal page:** edit `public/<page>.html`, remove `noindex`, add to `LEGAL_PAGES`.
 
 ## Owner TODO (handoff items — content/config, not code)

@@ -27,6 +27,13 @@ const LEGAL_PAGES = [];
 // --- Load products from content/products.json ---
 const products = JSON.parse(readFileSync(resolve(root, "content/products.json"), "utf8")).items;
 
+// --- Brand palette (content/theme.json, also drives the app's @theme via gen-theme) ---
+// so the static product pages restyle in lockstep with the CMS color editor.
+const theme = JSON.parse(readFileSync(resolve(root, "content/theme.json"), "utf8"));
+const rootVars =
+  `--sand:${theme.sand};--ink:${theme.ink};--ink-soft:${theme.inkSoft};` +
+  `--ink-mute:${theme.inkMute};--line:${theme.line};--moss:${theme.moss};--card:${theme.card}`;
+
 // --- Validate: fail loudly rather than ship $0.00 / broken Snipcart items ---
 if (products.length === 0) throw new Error("gen-products: parsed 0 products from src/content.ts");
 const ids = new Set();
@@ -82,7 +89,7 @@ writeFileSync(resolve(root, "public/products.html"), combined);
 
 // --- Shared compact brand CSS for static pages ---
 const BRAND_CSS = `
-  :root{color-scheme:only light;--sand:#f3efe6;--ink:#2a3326;--ink-soft:#4c5743;--ink-mute:#565d4c;--line:#cdc4b0;--moss:#586a44;--card:#fbf9f3}
+  :root{color-scheme:only light;${rootVars}}
   *{box-sizing:border-box}
   body{margin:0;background:var(--sand);color:var(--ink);font-family:"Jost",system-ui,sans-serif;font-weight:300;line-height:1.7;-webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}

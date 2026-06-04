@@ -27,6 +27,11 @@ export const content: SiteContent = {
   benefits: benefitsData.items,
   ingredients: ingredientsData.items,
   ritual: ritualData.items,
-  line: productsData.items,
+  // `featured` is derived from feature.featuredId (the CMS picker) so there's one
+  // source of truth; falls back to the first product if the id doesn't match.
+  line: productsData.items.map((p) => ({
+    ...p,
+    featured: p.id === feature.featuredId,
+  })),
   reviews: reviewsData.items,
 };

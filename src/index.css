@@ -125,6 +125,9 @@
    and are also available as CSS vars (var(--color-ink), …).
    ============================================================ */
 @theme {
+  /* Brand palette — edited via the CMS (content/theme.json) and written here by
+     scripts/gen-theme.mjs. Don't hand-edit between the markers; re-run the script. */
+  /* THEME-COLORS-BEGIN — generated from content/theme.json by scripts/gen-theme.mjs */
   --color-sand: #f3efe6; /* page background */
   --color-sand-deep: #eae3d6; /* alt background */
   --color-sand-deeper: #e2d9c8; /* deep background */
@@ -137,6 +140,7 @@
   --color-sage: #7e8b6a;
   --color-moss: #586a44; /* accent */
   --color-tan: #c8b79a;
+  /* THEME-COLORS-END */
 
   --font-display: "Jost", system-ui, sans-serif;
   --font-serif: "Cormorant Garamond", Georgia, serif;
@@ -249,6 +253,29 @@ button {
   letter-spacing: 0.32em;
   text-transform: uppercase;
   font-size: 0.72rem;
+}
+
+/* Rendered markdown (e.g. the founder story body) — flush outer margins so it
+   drops into existing layout, with light emphasis/link styling. */
+.rich > :first-child {
+  margin-top: 0;
+}
+.rich > :last-child {
+  margin-bottom: 0;
+}
+.rich p {
+  margin-block: 0 1em;
+}
+.rich strong {
+  font-weight: 500;
+}
+.rich em {
+  font-style: italic;
+}
+.rich a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
 }
 
 /* ---- Buttons ---- */

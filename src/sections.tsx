@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { content } from "./content";
 import { Reveal, Button, Ring, Wordmark } from "./components/ui";
 import { Picture } from "./components/Picture";
+import { Markdown } from "./components/Markdown";
 import { ICON } from "./components/icons";
 import { snip } from "./lib/snipcart";
 
@@ -512,9 +513,7 @@ export function Story() {
             </blockquote>
           </Reveal>
           <Reveal delay={160}>
-            <p className="lede" style={{ marginBottom: 26 }}>
-              {s.body}
-            </p>
+            <Markdown className="lede rich" style={{ marginBottom: 26 }} text={s.body} />
           </Reveal>
           <Reveal delay={220}>
             <Button variant="ghost" href="#story" arrow>

@@ -6,7 +6,6 @@
       "type": "Face Serum · 30ml",
       "price": 68,
       "img": "/img/product-serum.jpeg",
-      "featured": true,
       "tag": "Bestseller"
     },
     {
@@ -15,7 +14,6 @@
       "type": "Botanical Mask · 100ml",
       "price": 42,
       "img": "/img/product-cleanser.jpeg",
-      "featured": false,
       "tag": ""
     },
     {
@@ -24,7 +22,6 @@
       "type": "Face Oil · 30ml",
       "price": 54,
       "img": "/img/product-oil.jpeg",
-      "featured": false,
       "tag": ""
     },
     {
@@ -33,7 +30,6 @@
       "type": "Night Balm · 50ml",
       "price": 48,
       "img": "/img/product-cream.jpeg",
-      "featured": false,
       "tag": ""
     }
   ]

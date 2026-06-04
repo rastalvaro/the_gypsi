@@ -4,10 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/gen-theme.mjs && vite",
     "gen:images": "node scripts/gen-images.mjs",
     "gen:products": "node scripts/gen-products.mjs",
-    "build": "node scripts/gen-products.mjs && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
+    "gen:theme": "node scripts/gen-theme.mjs",
+    "build": "node scripts/gen-theme.mjs && node scripts/gen-products.mjs && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -15,6 +16,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "marked": "^14.1.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

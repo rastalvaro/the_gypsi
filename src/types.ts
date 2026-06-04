@@ -11,6 +11,8 @@ export interface Hero {
 }
 
 export interface Feature {
+  /** id of the product shown in the large feature block (the CMS "featured" picker). */
+  featuredId: string;
   lede: string;
   bullets: string[];
   rating: string;
@@ -82,7 +84,7 @@ export interface Product {
   type: string;
   price: number;
   img: string;
-  /** Exactly one product should be featured (shown large near the top). */
+  /** Derived in content.ts from feature.featuredId — not stored per product. */
   featured: boolean;
   /** Badge text, e.g. "Bestseller". Empty string = no badge. */
   tag: string;

@@ -252,3 +252,5 @@ collections:
           - { label: "Sage", name: sage, widget: color }
           - { label: "Moss (accent)", name: moss, widget: color }
           - { label: "Tan", name: tan, widget: color }
+          - { label: "On-dark (light text on dark sections — keep light)", name: onDark, widget: color }
+          - { label: "Hero backdrop (behind hero photo)", name: heroBackdrop, widget: color }

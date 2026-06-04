@@ -185,7 +185,7 @@ both the script and `src/types.ts`.
   `.ring`, `.marquee`) and the a11y utilities above.
 - Sections use Tailwind utilities for layout/responsive and inline styles + CSS vars for brand
   colors/gradients (preserves exact visual fidelity). Keep `color-scheme: only light` in `:root`.
-- **Theme / colors:** the 12 brand color tokens in the `@theme` block live between the
+- **Theme / colors:** the 14 brand color tokens in the `@theme` block live between the
   `/* THEME-COLORS-BEGIN/END */` markers and are **generated from `content/theme.json`** by
   `scripts/gen-theme.mjs` (build stage 0 + `npm run dev`). Editing colors in the CMS commits
   `theme.json`; the build rewrites the tokens, Tailwind recompiles utilities **and** `--color-*`
@@ -193,6 +193,11 @@ both the script and `src/types.ts`.
   **Never hand-edit between the markers** — change `theme.json` (or the script) and rebuild. The
   CMS only commits `theme.json`, so a committed `src/index.css` can lag until the next build/dev
   (self-healing). Mind WCAG AA contrast when changing `ink`/`ink-mute` on the sand backgrounds.
+  - All section backgrounds and text are token-driven, including the dark forest/hero sections:
+    `on-dark` is the light text/elements on them (translucent variants via `color-mix(... var(
+    --color-on-dark) N%, transparent)`), and `hero-backdrop` sits behind the hero photo. The only
+    intentionally-hardcoded colors left are the hero photo's dark gradient **scrims** in
+    `sections.tsx` (image legibility, not brand) — leave those as literal rgba.
 
 ## Fonts (self-hosted)
 

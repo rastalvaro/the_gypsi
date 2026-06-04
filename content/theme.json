@@ -10,5 +10,7 @@
   "forest": "#34412c",
   "sage": "#7e8b6a",
   "moss": "#586a44",
-  "tan": "#c8b79a"
+  "tan": "#c8b79a",
+  "onDark": "#eef1e4",
+  "heroBackdrop": "#1a2114"
 }

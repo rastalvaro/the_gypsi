@@ -37,7 +37,7 @@ export function Nav() {
         background: solid ? "color-mix(in oklab, var(--color-sand) 88%, transparent)" : "transparent",
         backdropFilter: solid ? "blur(10px)" : "none",
         borderBottom: `1px solid ${solid ? "var(--color-line)" : "transparent"}`,
-        color: solid ? "var(--color-ink)" : "#f3efe6",
+        color: solid ? "var(--color-ink)" : "var(--color-on-dark)",
       }}
     >
       <div className="wrap flex items-center justify-between" style={{ height: 78 }}>
@@ -117,7 +117,7 @@ export function Hero() {
     <section
       id="top"
       className="relative flex items-end overflow-hidden"
-      style={{ minHeight: "100svh", color: "#f3efe6", background: "#1a2114" }}
+      style={{ minHeight: "100svh", color: "var(--color-on-dark)", background: "var(--color-hero-backdrop)" }}
     >
       <Picture
         src={h.image}
@@ -331,28 +331,28 @@ export function ProductFeature() {
 export function Ingredients() {
   const s = content.ingredientsSection;
   return (
-    <section id="ingredients" className="section" style={{ background: "var(--color-forest)", color: "#eef1e4" }}>
+    <section id="ingredients" className="section" style={{ background: "var(--color-forest)", color: "var(--color-on-dark)" }}>
       <div className="wrap">
         <div className="grid grid-cols-1 md:grid-cols-2 items-end" style={{ gap: 40, marginBottom: 56 }}>
           <Reveal>
-            <p className="eyebrow" style={{ color: "rgba(238,241,228,.85)", marginBottom: 16 }}>
+            <p className="eyebrow" style={{ color: "color-mix(in oklab, var(--color-on-dark) 85%, transparent)", marginBottom: 16 }}>
               {s.eyebrow}
             </p>
-            <h2 className="display h2" style={{ color: "#eef1e4" }}>
+            <h2 className="display h2" style={{ color: "var(--color-on-dark)" }}>
               {s.headingLead}
               <br />
               {s.headingHighlight}
             </h2>
           </Reveal>
           <Reveal delay={120}>
-            <p className="lede" style={{ color: "rgba(238,241,228,.86)", margin: 0 }}>
+            <p className="lede" style={{ color: "color-mix(in oklab, var(--color-on-dark) 86%, transparent)", margin: 0 }}>
               {s.body}
             </p>
           </Reveal>
         </div>
         <div
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
-          style={{ gap: 1, background: "rgba(238,241,228,.16)", border: "1px solid rgba(238,241,228,.16)" }}
+          style={{ gap: 1, background: "color-mix(in oklab, var(--color-on-dark) 16%, transparent)", border: "1px solid color-mix(in oklab, var(--color-on-dark) 16%, transparent)" }}
         >
           {content.ingredients.map((g, i) => (
             <Reveal
@@ -362,7 +362,7 @@ export function Ingredients() {
             >
               <span
                 aria-hidden="true"
-                style={{ height: 64, width: 64, borderRadius: "50%", alignSelf: "flex-start", border: "1px solid rgba(238,241,228,.4)", display: "grid", placeItems: "center", color: "var(--color-tan)" }}
+                style={{ height: 64, width: 64, borderRadius: "50%", alignSelf: "flex-start", border: "1px solid color-mix(in oklab, var(--color-on-dark) 40%, transparent)", display: "grid", placeItems: "center", color: "var(--color-tan)" }}
               >
                 <span style={{ width: 26, display: "inline-flex" }}>{ICON.leaf}</span>
               </span>
@@ -371,7 +371,7 @@ export function Ingredients() {
                   {g.role}
                 </p>
                 <h3 style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: "1.5rem", margin: "0 0 8px" }}>{g.name}</h3>
-                <p style={{ color: "rgba(238,241,228,.78)", fontSize: ".9rem", margin: 0 }}>{g.note}</p>
+                <p style={{ color: "color-mix(in oklab, var(--color-on-dark) 78%, transparent)", fontSize: ".9rem", margin: 0 }}>{g.note}</p>
               </div>
             </Reveal>
           ))}
@@ -587,10 +587,10 @@ export function Newsletter() {
   };
 
   return (
-    <section id="newsletter" className="section" style={{ background: "var(--color-forest)", color: "#eef1e4" }}>
+    <section id="newsletter" className="section" style={{ background: "var(--color-forest)", color: "var(--color-on-dark)" }}>
       <div className="wrap" style={{ textAlign: "center", maxWidth: 760, marginInline: "auto" }}>
         <Reveal>
-          <p className="eyebrow" style={{ color: "rgba(238,241,228,.85)", marginBottom: 18 }}>
+          <p className="eyebrow" style={{ color: "color-mix(in oklab, var(--color-on-dark) 85%, transparent)", marginBottom: 18 }}>
             {n.eyebrow}
           </p>
         </Reveal>
@@ -600,7 +600,7 @@ export function Newsletter() {
           </h2>
         </Reveal>
         <Reveal delay={140}>
-          <p className="lede" style={{ color: "rgba(238,241,228,.86)", marginInline: "auto", marginBottom: 30 }}>
+          <p className="lede" style={{ color: "color-mix(in oklab, var(--color-on-dark) 86%, transparent)", marginInline: "auto", marginBottom: 30 }}>
             {n.body}
           </p>
         </Reveal>
@@ -638,13 +638,13 @@ export function Newsletter() {
                 placeholder="your@email.com"
                 aria-invalid={error ? true : undefined}
                 aria-describedby={error ? "nl-error" : undefined}
-                style={{ flex: "1 1 240px", background: "transparent", border: "1px solid rgba(238,241,228,.55)", color: "#eef1e4", padding: "15px 18px", borderRadius: 999, fontFamily: "var(--font-display)", letterSpacing: ".08em", fontSize: ".9rem" }}
+                style={{ flex: "1 1 240px", background: "transparent", border: "1px solid color-mix(in oklab, var(--color-on-dark) 55%, transparent)", color: "var(--color-on-dark)", padding: "15px 18px", borderRadius: 999, fontFamily: "var(--font-display)", letterSpacing: ".08em", fontSize: ".9rem" }}
               />
               <Button variant="light" arrow>
                 Subscribe
               </Button>
               {error && (
-                <p id="nl-error" role="alert" style={{ flexBasis: "100%", margin: "4px 0 0", color: "#f3efe6", fontSize: ".8rem", letterSpacing: ".04em" }}>
+                <p id="nl-error" role="alert" style={{ flexBasis: "100%", margin: "4px 0 0", color: "var(--color-on-dark)", fontSize: ".8rem", letterSpacing: ".04em" }}>
                   {error}
                 </p>
               )}

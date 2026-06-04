@@ -28,6 +28,8 @@ const TOKENS = [
   ["sage", "--color-sage", ""],
   ["moss", "--color-moss", "accent"],
   ["tan", "--color-tan", ""],
+  ["onDark", "--color-on-dark", "light text/elements on the dark (forest/hero) sections"],
+  ["heroBackdrop", "--color-hero-backdrop", "behind the hero photo (mostly hidden by it)"],
 ];
 
 const HEX = /^#[0-9a-fA-F]{3,8}$/;

@@ -249,13 +249,24 @@ both the script and `src/types.ts`.
   git-gateway / Netlify Identity support — do not use it). Login is GitHub OAuth; the editor
   needs a GitHub account with write access to `rastalvaro/the_gypsi`. Edits commit to `main`
   and trigger a Netlify rebuild.
-- **OAuth:** Sveltia uses **Netlify as the OAuth provider by default** (no `base_url` needed,
-  no self-hosted OAuth server) — the same flow Decap used. One-time setup:
-  1. GitHub → Settings → Developer settings → OAuth Apps → New: callback URL
-     `https://api.netlify.com/auth/done`.
-  2. Netlify → Site config → Access control → OAuth → Install provider → GitHub → paste the
-     Client ID + Secret.
-  (Netlify Identity / Git Gateway are no longer used — safe to disable in the Netlify dashboard.)
+- **OAuth:** authentication goes through the **Sveltia CMS Authenticator worker**, self-hosted
+  on the owner's own Cloudflare account at `https://sveltia-cms-auth.ingdimas.workers.dev`
+  (`base_url` in `config.yml`). (Netlify's built-in OAuth provider 404'd for the custom domain;
+  Netlify Identity / Git Gateway are unused — safe to disable in the Netlify dashboard.) Setup:
+  1. GitHub OAuth App (Settings → Developer settings → OAuth Apps): callback URL
+     `https://sveltia-cms-auth.ingdimas.workers.dev/callback`.
+  2. Cloudflare worker env vars: `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` (encrypted),
+     `ALLOWED_DOMAINS=thegypsi.com`.
+- **Security notes (auth):**
+  - The worker is deployed from `github.com/sveltia/sveltia-cms-auth` (same author as the CMS
+    bundle, already trusted via unpkg). It holds the GitHub OAuth **client secret** — rotate it
+    if the worker operator ever changes, and keep the worker on the official source.
+  - The repo is **private**, so the OAuth token carries GitHub's broad **`repo`** scope, which
+    grants access to **all** of the logged-in account's private repos (GitHub OAuth apps can't
+    scope to a single repo). **Log in with an account whose private-repo exposure is acceptable**
+    — ideally a dedicated editor account, not a personal one holding unrelated private work.
+  - Hardening TODO: bind the worker to a project-controlled custom domain (`auth.thegypsi.com`)
+    instead of the `workers.dev` URL, then update `base_url` + the `/admin/*` CSP `connect-src`.
 - **Config:** `public/admin/config.yml` defines all editable collections + the `backend` block
   (`repo` is hardcoded — update it if the repo moves). `public/admin/index.html` loads Sveltia
   from unpkg, pinned to a specific version with an SRI hash — update both when upgrading.

@@ -2,23 +2,23 @@
   "items": [
     {
       "name": "Shea Butter",
-      "role": "Rich in Vitamins A and E",
-      "note": "Natural Lasting Moisture."
+      "role": "Natural lasting moisture.",
+      "note": "Contains Vitamin E: Acts as a powerful antioxidant to protect skin cells from free radicals and premature aging. Vitamin A: Promotes cell regeneration and helps soothe dry or irritated skin. Vitamin F: A rich blend of essential fatty acids (linoleic and linolenic acids) that help maintain the skin's barrier and elasticity. Vitamin D: Helps rejuvenate skin. Essential Fatty Acids: Shea butter is dense in oleic acid, stearic acid, linoleic acid, and palmitic acid. These are highly effective emollients that soften and deeply moisturize. Minerals & Other Bioactive Compounds: Allantoin: Known for its healing, anti-inflammatory properties, which can help soothe conditions like eczema or minor abrasions. Triterpenes (e.g., Lupeol): These natural compounds are thought to help boost collagen production and minimize the destruction of collagen fibers. Phenolic Compounds: Contains antioxidants similar to those found in green tea, which further help fight off oxidative stress."
     },
     {
       "name": "Organic Castor Oil",
-      "role": "Contains Ricinoleic Acid: This unique fatty acid is responsible for the vast majority of castor oil's anti-inflammatory, antimicrobial, and deep-moisturizing properties. Vitamin E: It is rich in tocopherols (part of the Vitamin E family), which act as natural antioxidants. This helps protect your skin and hair from oxidative stress and free radical damage. Omega Fatty Acids: Contains beneficial amounts of Omega-6 and Omega-9 fatty acids, which help nourish and support the skin barrier.",
-      "note": "Grows and moisturizes lashes naturally."
+      "role": "Grows and moisturizes lashes naturally.",
+      "note": "Contains Ricinoleic Acid: This unique fatty acid is responsible for the vast majority of castor oil's anti-inflammatory, antimicrobial, and deep-moisturizing properties. Vitamin E: It is rich in tocopherols (part of the Vitamin E family), which act as natural antioxidants. This helps protect your skin and hair from oxidative stress and free radical damage. Omega Fatty Acids: Contains beneficial amounts of Omega-6 and Omega-9 fatty acids, which help nourish and support the skin barrier."
     },
     {
       "name": "Organic Carrot Seed Oil",
-      "role": "Beta-Carotene: A potent antioxidant that the body converts into retinol (Vitamin A), which is famous for supporting cell turnover and skin rejuvenation. Vitamin E: Especially tocopherols and tocotrienols, which help protect the skin from free radical damage. Essential Fatty Acids: Predominantly petroselinic acid (an Omega-12 fatty acid) and linoleic acid (Omega-6), which deeply moisturize and maintain the skin's natural barrier.",
-      "note": "Brightens, firms & evens tone."
+      "role": "Brightens, firms & evens tone.",
+      "note": "Contains Beta-Carotene: A potent antioxidant that the body converts into retinol (Vitamin A), which is famous for supporting cell turnover and skin rejuvenation. Vitamin E: Especially tocopherols and tocotrienols, which help protect the skin from free radical damage. Essential Fatty Acids: Predominantly petroselinic acid (an Omega-12 fatty acid) and linoleic acid (Omega-6), which deeply moisturize and maintain the skin's natural barrier."
     },
     {
       "name": "Siberian Sea Buckthorn Oil",
-      "role": "Vitamins & Minerals: Extraordinary levels of Vitamin C, alongside Vitamin E, Vitamin K, and B-complex vitamins. Essential Fatty Acids: It is one of the few plant sources that contains the entire spectrum of Omegas: Omega-3, -6, -9, and the rare Omega-7, which is highly valued for cell regeneration. Antioxidants: Packed with flavonoids, quercetin, and carotenoids (such as beta-carotene). Amino Acids: Contains 18 amino acids, including essential ones the human body cannot produce itself.",
-      "note": "Super anti-aging."
+      "role": "Super anti-aging.",
+      "note": "Contains extraordinary levels of Vitamin C, alongside Vitamin E, Vitamin K, and B-complex vitamins. Essential Fatty Acids: It is one of the few plant sources that contains the entire spectrum of Omegas: Omega-3, -6, -9, and the rare Omega-7, which is highly valued for cell regeneration. Antioxidants: Packed with flavonoids, quercetin, and carotenoids (such as beta-carotene). Amino Acids: Contains 18 amino acids, including essential ones the human body cannot produce itself."
     }
   ]
 }

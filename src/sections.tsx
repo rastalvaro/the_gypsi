@@ -330,6 +330,8 @@ export function ProductFeature() {
 /* ===================== INGREDIENTS ===================== */
 export function Ingredients() {
   const s = content.ingredientsSection;
+  const [open, setOpen] = useState<boolean[]>(() => content.ingredients.map(() => false));
+  const line = "color-mix(in oklab, var(--color-on-dark) 16%, transparent)";
   return (
     <section id="ingredients" className="section" style={{ background: "var(--color-forest)", color: "var(--color-on-dark)" }}>
       <div className="wrap">
@@ -350,66 +352,91 @@ export function Ingredients() {
             </p>
           </Reveal>
         </div>
-        <div style={{ borderTop: "1px solid color-mix(in oklab, var(--color-on-dark) 16%, transparent)" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 items-start" style={{ gap: 18 }}>
           {content.ingredients.map((g, i) => {
-            const flip = i % 2 === 1;
+            const isOpen = open[i];
+            const panelId = `ingredient-detail-${i}`;
             return (
               <Reveal
                 key={g.name}
-                as="article"
-                delay={i * 80}
-                className="grid grid-cols-1 md:grid-cols-[0.85fr_1.15fr]"
+                delay={i * 90}
                 style={{
-                  gap: "clamp(18px, 4vw, 56px)",
-                  padding: "clamp(34px, 6vw, 60px) 0",
-                  borderBottom: "1px solid color-mix(in oklab, var(--color-on-dark) 16%, transparent)",
+                  background: "var(--color-forest)",
+                  border: `1px solid ${line}`,
+                  padding: "28px 24px 26px",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
-                <div className={flip ? "md:order-2 md:text-right md:pl-[6%]" : "md:order-1 md:pr-[6%]"}>
-                  <div
+                <span
+                  aria-hidden="true"
+                  style={{
+                    height: 56,
+                    width: 56,
+                    borderRadius: "50%",
+                    border: "1px solid color-mix(in oklab, var(--color-on-dark) 40%, transparent)",
+                    display: "grid",
+                    placeItems: "center",
+                    color: "var(--color-tan)",
+                    marginBottom: 22,
+                  }}
+                >
+                  <span style={{ width: 22, display: "inline-flex" }}>{ICON.leaf}</span>
+                </span>
+                <p className="tracked" style={{ color: "var(--color-tan)", marginBottom: 8 }}>
+                  {g.role}
+                </p>
+                <h3 style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, fontSize: "1.5rem", margin: "0 0 18px" }}>
+                  {g.name}
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setOpen((prev) => prev.map((v, idx) => (idx === i ? !v : v)))}
+                  aria-expanded={isOpen}
+                  aria-controls={panelId}
+                  className="link-underline"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 9,
+                    alignSelf: "flex-start",
+                    background: "none",
+                    border: 0,
+                    padding: 0,
+                    marginTop: "auto",
+                    cursor: "pointer",
+                    color: "var(--color-on-dark)",
+                  }}
+                >
+                  {isOpen ? "Read less" : "Full profile"}
+                  <span
                     aria-hidden="true"
-                    className={flip ? "md:flex-row-reverse md:justify-end" : ""}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 12,
-                      marginBottom: 16,
+                      width: 11,
+                      display: "inline-flex",
+                      transform: isOpen ? "rotate(-90deg)" : "rotate(90deg)",
+                      transition: "transform .35s cubic-bezier(.2,.8,.2,1)",
                     }}
                   >
-                    <span style={{ width: 19, display: "inline-flex", color: "var(--color-tan)", opacity: 0.8 }}>{ICON.leaf}</span>
-                    <span className="display" style={{ fontSize: ".78rem", letterSpacing: ".34em", color: "var(--color-tan)" }}>
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    {ICON.arrowR}
+                  </span>
+                </button>
+                <div
+                  id={panelId}
+                  style={{ display: "grid", gridTemplateRows: isOpen ? "1fr" : "0fr", transition: "grid-template-rows .5s cubic-bezier(.16,1,.3,1)" }}
+                >
+                  <div style={{ overflow: "hidden", minHeight: 0 }}>
+                    <p
+                      style={{
+                        color: "color-mix(in oklab, var(--color-on-dark) 74%, transparent)",
+                        fontSize: ".92rem",
+                        lineHeight: 1.75,
+                        margin: "20px 0 0",
+                      }}
+                    >
+                      {g.note}
+                    </p>
                   </div>
-                  <h3
-                    style={{
-                      fontFamily: "var(--font-serif)",
-                      fontStyle: "italic",
-                      fontWeight: 400,
-                      fontSize: "clamp(1.9rem, 3.6vw, 2.7rem)",
-                      lineHeight: 1.12,
-                      margin: "0 0 12px",
-                      color: "var(--color-on-dark)",
-                    }}
-                  >
-                    {g.name}
-                  </h3>
-                  <p className="tracked" style={{ color: "var(--color-tan)", margin: 0 }}>
-                    {g.role}
-                  </p>
-                </div>
-                <div className={flip ? "md:order-1 md:pr-[6%]" : "md:order-2 md:pl-[6%]"}>
-                  <p
-                    style={{
-                      color: "color-mix(in oklab, var(--color-on-dark) 76%, transparent)",
-                      fontSize: "1rem",
-                      lineHeight: 1.85,
-                      margin: 0,
-                      maxWidth: "60ch",
-                    }}
-                  >
-                    {g.note}
-                  </p>
                 </div>
               </Reveal>
             );

@@ -350,31 +350,70 @@ export function Ingredients() {
             </p>
           </Reveal>
         </div>
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
-          style={{ gap: 1, background: "color-mix(in oklab, var(--color-on-dark) 16%, transparent)", border: "1px solid color-mix(in oklab, var(--color-on-dark) 16%, transparent)" }}
-        >
-          {content.ingredients.map((g, i) => (
-            <Reveal
-              key={g.name}
-              delay={i * 90}
-              style={{ background: "var(--color-forest)", padding: "30px 24px", minHeight: 230, display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-            >
-              <span
-                aria-hidden="true"
-                style={{ height: 64, width: 64, borderRadius: "50%", alignSelf: "flex-start", border: "1px solid color-mix(in oklab, var(--color-on-dark) 40%, transparent)", display: "grid", placeItems: "center", color: "var(--color-tan)" }}
+        <div style={{ borderTop: "1px solid color-mix(in oklab, var(--color-on-dark) 16%, transparent)" }}>
+          {content.ingredients.map((g, i) => {
+            const flip = i % 2 === 1;
+            return (
+              <Reveal
+                key={g.name}
+                as="article"
+                delay={i * 80}
+                className="grid grid-cols-1 md:grid-cols-[0.85fr_1.15fr]"
+                style={{
+                  gap: "clamp(18px, 4vw, 56px)",
+                  padding: "clamp(34px, 6vw, 60px) 0",
+                  borderBottom: "1px solid color-mix(in oklab, var(--color-on-dark) 16%, transparent)",
+                }}
               >
-                <span style={{ width: 26, display: "inline-flex" }}>{ICON.leaf}</span>
-              </span>
-              <div>
-                <p className="tracked" style={{ color: "var(--color-tan)", marginBottom: 8 }}>
-                  {g.role}
-                </p>
-                <h3 style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: "1.5rem", margin: "0 0 8px" }}>{g.name}</h3>
-                <p style={{ color: "color-mix(in oklab, var(--color-on-dark) 78%, transparent)", fontSize: ".9rem", margin: 0 }}>{g.note}</p>
-              </div>
-            </Reveal>
-          ))}
+                <div className={flip ? "md:order-2 md:text-right md:pl-[6%]" : "md:order-1 md:pr-[6%]"}>
+                  <div
+                    aria-hidden="true"
+                    className={flip ? "md:flex-row-reverse md:justify-end" : ""}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                      marginBottom: 16,
+                    }}
+                  >
+                    <span style={{ width: 19, display: "inline-flex", color: "var(--color-tan)", opacity: 0.8 }}>{ICON.leaf}</span>
+                    <span className="display" style={{ fontSize: ".78rem", letterSpacing: ".34em", color: "var(--color-tan)" }}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <h3
+                    style={{
+                      fontFamily: "var(--font-serif)",
+                      fontStyle: "italic",
+                      fontWeight: 400,
+                      fontSize: "clamp(1.9rem, 3.6vw, 2.7rem)",
+                      lineHeight: 1.12,
+                      margin: "0 0 12px",
+                      color: "var(--color-on-dark)",
+                    }}
+                  >
+                    {g.name}
+                  </h3>
+                  <p className="tracked" style={{ color: "var(--color-tan)", margin: 0 }}>
+                    {g.role}
+                  </p>
+                </div>
+                <div className={flip ? "md:order-1 md:pr-[6%]" : "md:order-2 md:pl-[6%]"}>
+                  <p
+                    style={{
+                      color: "color-mix(in oklab, var(--color-on-dark) 76%, transparent)",
+                      fontSize: "1rem",
+                      lineHeight: 1.85,
+                      margin: 0,
+                      maxWidth: "60ch",
+                    }}
+                  >
+                    {g.note}
+                  </p>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>

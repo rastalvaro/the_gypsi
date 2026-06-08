@@ -9,6 +9,21 @@ local_backend: true
 media_folder: public/img
 public_folder: /img
 
+# Auto-optimize every uploaded image: convert to WebP, cap the long edge at
+# 2048px, quality 82. Keeps client uploads fast with no build step or manual
+# conversion.
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2048
+          height: 2048
+        svg:
+          optimize: true
+
 locale: en
 
 collections:

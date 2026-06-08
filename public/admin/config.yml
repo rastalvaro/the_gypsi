@@ -43,7 +43,8 @@ collections:
               - label: "ID"
                 name: id
                 widget: string
-                hint: "Unique, lowercase, no spaces. Never change after the product goes live — it's the cart ID and page URL."
+                pattern: ['^[a-z0-9-]+$', "Lowercase letters, numbers, and hyphens only — no spaces or uppercase."]
+                hint: "Unique slug e.g. face-serum. Set once; never change after the product goes live — it's the cart ID and page URL."
               - label: "Name"
                 name: name
                 widget: string
@@ -63,7 +64,7 @@ collections:
               - label: "Image"
                 name: img
                 widget: image
-                hint: "Upload a JPEG. Responsive image variants are generated separately — the JPEG will display on its own until then."
+                hint: "Upload any photo — it will be auto-converted to WebP. Responsive variants are generated automatically by CI after upload."
               - label: "Badge"
                 name: tag
                 widget: string

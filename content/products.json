@@ -5,36 +5,40 @@
       "name": "The Mask",
       "type": "Face Mask · 2 oz",
       "price": 70,
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/product-mask.webp",
-      "tag": "Bestseller"
+      "description": "Begin with clean, dry skin. Leave for at least an hour but also can be used overnight, every night for maximum results. Wash with room temperature water and continue with your own ritual or use our face and body butter for some moisture.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "img": "/img/ChatGPT Image Jun 8, 2026, 02_58_33 PM.webp",
+      "tag": "Bestseller",
+      "featured": true
     },
     {
-      "id": "face-and-body-butter",
+      "id": "face and body butter",
       "name": "The Face and Body Butter",
       "type": "Moisturizer · 16 oz",
       "price": 40,
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "description": "Can be used for body, face or hands that need natural and lasting moisture. Highly moisturizing, use sparingly. Can also be used as a hydrating face mask.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/product-cleanser.jpeg",
-      "tag": ""
+      "tag": "",
+      "featured": false
     },
     {
-      "id": "eyelash-serum",
+      "id": "eyelash serum",
       "name": "The Eyelash Serum",
       "type": "Eyelash Moisture & Growth · 2 oz",
       "price": 25,
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "description": "Grow lashes and eyebrows naturally for that beautiful island look. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/product-oil.jpeg",
-      "tag": ""
+      "tag": "",
+      "featured": false
     },
     {
-      "id": "lip-butter",
+      "id": "lip butter",
       "name": "The Lip Butter",
       "type": "Lip Moisturizer · 2 oz",
       "price": 25,
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/product-lip-butter.webp",
-      "tag": ""
+      "description": "Healing, lasting moisture for dry, cracked lips.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "img": "/img/1b91ceb6-03db-4bef-9000-185376ae2c08.webp",
+      "tag": "",
+      "featured": false
     }
   ]
 }

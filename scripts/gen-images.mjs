@@ -59,10 +59,16 @@ for (const img of IMAGES) {
   const m = resolve(imgDir, `${img.name}.${ext}`);
   if (statSync(m).size === 0) throw new Error(`gen-images: master public/img/${img.name}.${ext} is empty.`);
 }
-const referenced = [...readFileSync(resolve(root, "src/content.ts"), "utf8").matchAll(/\/img\/([a-z0-9-]+)\.(jpe?g|webp)/gi)].map((x) => x[1]);
+// Scan all content JSON files (not content.ts, which has no hardcoded paths).
+const contentDir = resolve(root, "content");
+const contentText = readdirSync(contentDir)
+  .filter((f) => f.endsWith(".json"))
+  .map((f) => readFileSync(resolve(contentDir, f), "utf8"))
+  .join("\n");
+const referenced = [...contentText.matchAll(/\/img\/([a-z0-9-]+)\.(jpe?g|webp)/gi)].map((x) => x[1]);
 const drift = [...new Set(referenced)].filter((name) => !managed.has(name));
 if (drift.length)
-  throw new Error(`gen-images: content.ts references ${drift.map((n) => "/img/" + n).join(", ")} with no IMAGES ladder — add one (its srcset entries would 404).`);
+  throw new Error(`gen-images: content JSON references ${drift.map((n) => "/img/" + n).join(", ")} with no IMAGES ladder — add one (its srcset entries would 404).`);
 
 const tmp = mkdtempSync(join(tmpdir(), "gypsi-img-"));
 let made = 0;

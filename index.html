@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light" />
+    <!-- /admin/ is the static Sveltia CMS, not part of this SPA. The host serves a
+         SPA fallback for bare directory paths, which would load this homepage instead.
+         Redirect the bare /admin or /admin/ URL to the real CMS entry file. -->
+    <script>
+      if (/^\/admin\/?$/.test(location.pathname))
+        location.replace("/admin/index.html" + location.search + location.hash);
+    </script>
     <title>The Gypsi — Clean Botanical Skincare</title>
     <meta name="description" content="Clean, botanical skincare born from a journey across the world's wild places. Real, visible glow — no needles, no compromise."
     />

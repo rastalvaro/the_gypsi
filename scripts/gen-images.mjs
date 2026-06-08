@@ -31,6 +31,9 @@ const IMAGES = [
   { name: "product-cleanser", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "product-oil", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "product-cream", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
+  // product-mask doubles as the hero image, so include both hero + product widths.
+  { name: "product-mask", widths: [320, 360, 480, 512, 660, 768, 1000], webpQ: 80, avifCq: 32 },
+  { name: "product-lip-butter", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
 ];
 
 const intrinsicWidth = (file) =>
@@ -38,16 +41,25 @@ const intrinsicWidth = (file) =>
 
 const managed = new Set(IMAGES.map((i) => i.name));
 
+// Resolve the master file for an image: prefer .jpeg, fall back to .webp.
+// CMS uploads are auto-converted to WebP; JPEG is still preferred for manual masters.
+const masterExt = (name) => {
+  if (existsSync(resolve(imgDir, `${name}.jpeg`))) return "jpeg";
+  if (existsSync(resolve(imgDir, `${name}.webp`))) return "webp";
+  return null;
+};
+
 // Pre-flight (before mutating ANY files, so a later failure can't leave one image with
 // its variants deleted-but-not-regenerated): every master must exist & be non-empty,
 // and every photo referenced in content.ts must have a ladder here. A missing ladder
 // would ship 404 srcset entries, so it's a hard error — not a warning.
 for (const img of IMAGES) {
-  const m = resolve(imgDir, `${img.name}.jpeg`);
-  if (!existsSync(m) || statSync(m).size === 0)
-    throw new Error(`gen-images: master public/img/${img.name}.jpeg is missing or empty.`);
+  const ext = masterExt(img.name);
+  if (!ext) throw new Error(`gen-images: master public/img/${img.name}.jpeg (or .webp) is missing.`);
+  const m = resolve(imgDir, `${img.name}.${ext}`);
+  if (statSync(m).size === 0) throw new Error(`gen-images: master public/img/${img.name}.${ext} is empty.`);
 }
-const referenced = [...readFileSync(resolve(root, "src/content.ts"), "utf8").matchAll(/\/img\/([a-z0-9-]+)\.jpe?g/gi)].map((x) => x[1]);
+const referenced = [...readFileSync(resolve(root, "src/content.ts"), "utf8").matchAll(/\/img\/([a-z0-9-]+)\.(jpe?g|webp)/gi)].map((x) => x[1]);
 const drift = [...new Set(referenced)].filter((name) => !managed.has(name));
 if (drift.length)
   throw new Error(`gen-images: content.ts references ${drift.map((n) => "/img/" + n).join(", ")} with no IMAGES ladder — add one (its srcset entries would 404).`);
@@ -58,7 +70,7 @@ const warnings = [];
 
 try {
   for (const img of IMAGES) {
-    const master = resolve(imgDir, `${img.name}.jpeg`);
+    const master = resolve(imgDir, `${img.name}.${masterExt(img.name)}`);
     // Clear stale suffixed variants for this image so a dropped width never lingers.
     for (const f of readdirSync(imgDir))
       if (new RegExp(`^${img.name}-\\d+\\.(avif|webp)$`).test(f)) unlinkSync(resolve(imgDir, f));

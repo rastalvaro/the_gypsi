@@ -12,7 +12,7 @@ import type { CSSProperties } from "react";
  * story) whose intrinsic ratio matches the display; rely on CSS aspect-ratio (no
  * width/height) for the cropped card/feature images so the box stays locked.
  */
-const stem = (src: string) => src.replace(/\.jpe?g$/i, "");
+const stem = (src: string) => src.replace(/\.(jpe?g|webp)$/i, "");
 const srcset = (base: string, ext: string, widths: number[]) =>
   widths.map((w) => `${base}-${w}.${ext} ${w}w`).join(", ");
 

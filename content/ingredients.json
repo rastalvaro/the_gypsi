@@ -1,19 +1,34 @@
 {
   "items": [
     {
+      "name": "Organic Apricot Seed Oil",
+      "role": "Improves skin texture and elasticity.",
+      "note": "Contains: Vitamin E: A powerful antioxidant that protects skin cells from environmental stressors, such as UV rays and pollution, which helps combat premature aging. Vitamin A: Promotes skin cell turnover and rejuvenation, which helps reduce the appearance of fine lines and maintains skin elasticity. Vitamin C: Acts as a brightening agent and antioxidant that supports collagen production and guards against free radicals. Essential Fatty Acids: Oleic Acid (Omega-9): A rich, moisturizing fatty acid that softens the skin and acts as an emollient to seal in moisture. Linoleic Acid (Omega-6): Helps strengthen the skin’s natural lipid barrier and regulate moisture loss. Gamma-Linolenic Acid (GLA): Helps reduce skin inflammation and aids in soothing sensitive or irritated skin. Minerals: Contains trace amounts of essential minerals like potassium, magnesium, and calcium that support overall skin health and cellular function. Phytosterols: Plant compounds that help protect the collagen in your skin, promote hydration, and relieve itchy or dry skin."
+    },
+    {
       "name": "Shea Butter",
-      "role": "Natural lasting moisture.",
-      "note": "Contains Vitamin E: Acts as a powerful antioxidant to protect skin cells from free radicals and premature aging. Vitamin A: Promotes cell regeneration and helps soothe dry or irritated skin. Vitamin F: A rich blend of essential fatty acids (linoleic and linolenic acids) that help maintain the skin's barrier and elasticity. Vitamin D: Helps rejuvenate skin. Essential Fatty Acids: Shea butter is dense in oleic acid, stearic acid, linoleic acid, and palmitic acid. These are highly effective emollients that soften and deeply moisturize. Minerals & Other Bioactive Compounds: Allantoin: Known for its healing, anti-inflammatory properties, which can help soothe conditions like eczema or minor abrasions. Triterpenes (e.g., Lupeol): These natural compounds are thought to help boost collagen production and minimize the destruction of collagen fibers. Phenolic Compounds: Contains antioxidants similar to those found in green tea, which further help fight off oxidative stress."
+      "role": "Natural lasting moisture and skin rejuvenation.",
+      "note": "Contains: Vitamin E: A powerful antioxidant to protect skin cells from free radicals & premature aging. Vitamin A: Promotes cell regeneration & helps soothe dry or irritated skin. Vitamin F: A rich blend of essential fatty acids that help maintain the skin's barrier & elasticity. Vitamin D: Helps rejuvenate skin. Essential Fatty Acids: Dense in oleic acid, stearic acid, linoleic acid, & palmitic acid (highly effective emollients that soften & deeply moisturize). Minerals & Other Bioactive Compounds: Allantoin: Known for its healing, anti-inflammatory properties, which help soothe eczema or minor abrasions. Triterpenes: These natural compounds help boost collagen production & minimize the destruction of collagen fibers. Phenolic Compounds: Contains antioxidants similar to those found in green tea, which further help fight off oxidative stress."
+    },
+    {
+      "name": "Aloe Vera",
+      "role": "Boosts collagen production and brightens skin.",
+      "note": "Contains: Vitamin A (Beta-Carotene): Supports skin cell turnover, helps repair damaged tissue, and keeps the complexion clear by addressing breakouts. Vitamin C: A potent antioxidant that protects against environmental damage, brightens dull skin, and boosts collagen production for improved elasticity. Vitamin E: Combats free radicals to prevent premature aging and deeply nourishes dry skin by maintaining its natural barrier. Vitamin B12 & Folic Acid: Assists in the production of new skin cells, aiding the body's natural healing and cell regeneration processes. Zinc: Acts as a natural astringent and anti-inflammatory agent, making it highly effective at fighting acne and calming irritated skin. Magnesium: Known as the \"anti-stress\" mineral, it helps calm sensitivity, reduces inflammation, and protects the skin barrier from sun damage. Potassium: Plays a crucial role in maintaining skin hydration levels and ensuring the barrier functions properly. Copper & Selenium: Provide antioxidant properties and support structural proteins to keep the skin firm and resilient."
     },
     {
       "name": "Organic Castor Oil",
       "role": "Grows and moisturizes lashes naturally.",
-      "note": "Contains Ricinoleic Acid: This unique fatty acid is responsible for the vast majority of castor oil's anti-inflammatory, antimicrobial, and deep-moisturizing properties. Vitamin E: It is rich in tocopherols (part of the Vitamin E family), which act as natural antioxidants. This helps protect your skin and hair from oxidative stress and free radical damage. Omega Fatty Acids: Contains beneficial amounts of Omega-6 and Omega-9 fatty acids, which help nourish and support the skin barrier."
+      "note": "Contains: Ricinoleic Acid: This unique fatty acid is responsible for the vast majority of castor oil's anti-inflammatory, antimicrobial, and deep-moisturizing properties. Vitamin E: It is rich in tocopherols (part of the Vitamin E family), which act as natural antioxidants. This helps protect your skin and hair from oxidative stress and free radical damage. Omega Fatty Acids: Contains beneficial amounts of Omega-6 and Omega-9 fatty acids, which help nourish and support the skin barrier. Minerals: Contains trace amounts of foundational minerals including magnesium, zinc, and iron. Proteins: Contains proteins and amino acids that help nourish hair roots and strengthen the skin barrier."
     },
     {
       "name": "Organic Carrot Seed Oil",
       "role": "Brightens, firms & evens tone.",
-      "note": "Contains Beta-Carotene: A potent antioxidant that the body converts into retinol (Vitamin A), which is famous for supporting cell turnover and skin rejuvenation. Vitamin E: Especially tocopherols and tocotrienols, which help protect the skin from free radical damage. Essential Fatty Acids: Predominantly petroselinic acid (an Omega-12 fatty acid) and linoleic acid (Omega-6), which deeply moisturize and maintain the skin's natural barrier."
+      "note": "Contains: Beta-Carotene (Provitamin A): that acts as a natural retinol, boosting cell regeneration, evening out skin tone, and minimizing the appearance of fine lines without irritation. Vitamin E: A heavy-duty antioxidant that neutralizes free radicals, protects the skin barrier, and deeply moisturizes. Vitamin C: Aids in collagen formation, which brightens the complexion and helps heal sun-damaged or scarred skin. Essential Fatty Acids (Omega-6 and Omega-9): These support the skin's natural lipid barrier, ensuring moisture retention and keeping skin both young and supple."
+    },
+    {
+      "name": "Pectin",
+      "role": "Helps skin retain moisture and prevent aging.",
+      "note": "A Natural Humectant: Pectin naturally binds water, making it an excellent plant-based moisturizer that helps the skin retain hydration and prevents transepidermal water loss. Barrier Support: It forms a lightweight, protective film on the skin's surface, keeping it smooth and shielding it from environmental stressors. Antioxidant Delivery: Pectin is typically rich in fruit polyphenols and galacturonic acid."
     },
     {
       "name": "Siberian Sea Buckthorn Oil",

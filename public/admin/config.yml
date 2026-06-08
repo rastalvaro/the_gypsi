@@ -15,6 +15,7 @@ public_folder: /img
 media_libraries:
   default:
     config:
+      slugify_filename: true
       transformations:
         raster_image:
           format: webp

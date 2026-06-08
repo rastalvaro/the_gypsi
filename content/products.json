@@ -5,40 +5,40 @@
       "name": "The Mask",
       "type": "Face Mask · 2 oz",
       "price": 70,
-      "img": "/img/product-serum.jpeg",
-      "featured": true,
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "img": "/img/ChatGPT Image Jun 8, 2026, 02_58_33 PM.webp",
       "tag": "Bestseller",
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
+      "featured": true
     },
     {
       "id": "face and body butter",
       "name": "The Face and Body Butter",
       "type": "Moisturizer · 16 oz",
       "price": 40,
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/product-cleanser.jpeg",
-      "featured": false,
       "tag": "",
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
+      "featured": false
     },
     {
       "id": "eyelash serum",
       "name": "The Eyelash Serum",
       "type": "Eyelash Moisture & Growth · 2 oz",
       "price": 25,
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/product-oil.jpeg",
-      "featured": false,
       "tag": "",
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
+      "featured": false
     },
     {
       "id": "lip butter",
       "name": "The Lip Butter",
       "type": "Lip Moisturizer · 2 oz",
       "price": 25,
-      "img": "/img/product-cream.jpeg",
-      "featured": false,
+      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "img": "/img/1b91ceb6-03db-4bef-9000-185376ae2c08.webp",
       "tag": "",
-      "description": "A clean, botanical formula made in small batches — part of The Gypsi ritual."
+      "featured": false
     }
   ]
 }

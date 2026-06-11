@@ -1,0 +1,36 @@
+name: Normalize image uploads
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'public/img/**'
+permissions:
+  contents: write
+concurrency:
+  group: normalize-uploads
+  cancel-in-progress: false
+jobs:
+  normalize:
+    # Skip the bot's own follow-up commit to avoid an infinite loop.
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ImageMagick + HEIF support
+        run: sudo apt-get update && sudo apt-get install -y imagemagick libheif1 libde265-0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Convert new uploads to JPEG
+        run: node scripts/normalize-uploads.mjs
+      - name: Commit converted images
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Auto-convert uploaded images to JPEG"
+            git push
+          else
+            echo "Nothing to convert."
+          fi

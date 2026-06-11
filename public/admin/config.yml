@@ -4,8 +4,6 @@ backend:
   branch: main
   base_url: https://sveltia-cms-auth.ingdimas.workers.dev
 
-local_backend: true
-
 media_folder: public/img
 public_folder: /img
 
@@ -369,6 +367,11 @@ collections:
   - name: pages
     label: "Pages"
     folder: "content/pages"
+    # Pages are stored as JSON (matching the other content/*.json files). Without
+    # this, Sveltia defaults to Markdown frontmatter and the .json files error on
+    # open/save — the `body` markdown widget is kept and stored as a JSON string.
+    extension: json
+    format: json
     create: true
     slug: "{{slug}}"
     fields:

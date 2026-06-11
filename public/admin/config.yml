@@ -10,18 +10,14 @@ public_folder: /img
 # Auto-optimize every uploaded image: convert to WebP, cap the long edge at
 # 2048px, quality 82. Keeps client uploads fast with no build step or manual
 # conversion.
+# Uploads are NOT transformed in the browser — that was failing on PNG/WebP
+# sources. The client can upload any image type; a CI Action
+# (.github/workflows/normalize-uploads.yml) converts new uploads to the JPEG
+# masters this site's image pipeline expects and rewrites their references.
 media_libraries:
   default:
     config:
       slugify_filename: true
-      transformations:
-        raster_image:
-          format: webp
-          quality: 82
-          width: 2048
-          height: 2048
-        svg:
-          optimize: true
 
 locale: en
 

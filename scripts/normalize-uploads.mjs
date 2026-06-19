@@ -65,7 +65,7 @@ const mediaExists = (pub) => fs.existsSync(path.join(MEDIA_DIR, pub.slice(`${PUB
 // the file to .jpeg), and that save touches no media file, so the conversion loop
 // above finds nothing and old code bailed early, shipping a broken image. Here we
 // repair the ref to the .jpeg master that actually exists.
-const RASTER_RE = /\/img\/[^"'\s]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
+const RASTER_RE = /\/img\/[^"]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
 const dangling = new Map(); // from -> to
 for (const f of contentFiles) {
   for (const ref of fs.readFileSync(f, 'utf8').match(RASTER_RE) || []) {

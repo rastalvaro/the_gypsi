@@ -34,6 +34,9 @@ const IMAGES = [
   // product-mask doubles as the hero image, so include both hero + product widths.
   { name: "product-mask", widths: [320, 360, 480, 512, 660, 768, 1000], webpQ: 80, avifCq: 32 },
   { name: "product-lip-butter", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
+  // CMS-uploaded masters referenced from content/*.json (The Tea product + the story photo).
+  { name: "herbaljarhighres", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
+  { name: "SkincareHighRes", widths: [400, 640, 1000], webpQ: 80, avifCq: 32 },
 ];
 
 const intrinsicWidth = (file) =>

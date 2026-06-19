@@ -46,7 +46,7 @@
       "type": "Tea Blend - 16 oz",
       "price": 30,
       "description": "An organic blend of all the best herbs and flowers for that skin of yours. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/herbaljarhighres.webp",
+      "img": "/img/herbaljarhighres.jpeg",
       "tag": ""
     },
     {
@@ -55,7 +55,7 @@
       "type": "Face oil - 8 oz",
       "price": 50,
       "description": "A blend of exotic oils that are super anti-oxidant, anti-aging, boosts collagen production and firms skin.",
-      "img": "/img/faceoil.webp",
+      "img": "/img/faceoil.jpeg",
       "tag": ""
     }
   ]

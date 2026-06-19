@@ -69,7 +69,9 @@ for (const p of products) {
 // normalize-uploads self-heals these (.webp→.jpeg) on push; this is the backstop
 // that fails the build loudly rather than deploying a broken master.
 {
-  const imgRe = /\/img\/[^"'\s]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
+  // Match the whole path up to the closing JSON quote (spaces included) — a spaced
+  // filename like "ChatGPT Image ….webp" must NOT slip past this guard.
+  const imgRe = /\/img\/[^"]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
   const dead = new Set();
   for (const f of readdirSync(resolve(root, "content")).filter((n) => n.endsWith(".json"))) {
     const txt = readFileSync(resolve(root, "content", f), "utf8");

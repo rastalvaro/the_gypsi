@@ -50,6 +50,12 @@ for (const p of products) {
   if (!p.id || !p.name || !p.img) {
     throw new Error(`gen-products: product is missing id/name/img: ${JSON.stringify(p)}`);
   }
+  // The id is the page filename, URL, and Snipcart item id — a space or uppercase
+  // would yield an invalid sitemap <loc> and a broken data-item-url. The CMS already
+  // enforces this pattern; guard here too for direct JSON edits.
+  if (!/^[a-z0-9-]+$/.test(p.id)) {
+    throw new Error(`gen-products: invalid product id "${p.id}" — use lowercase letters, numbers, and hyphens only (no spaces).`);
+  }
   if (!Number.isFinite(p.price) || p.price <= 0) {
     throw new Error(`gen-products: product "${p.id}" has an invalid price (${p.price}). Refusing to emit $0.00.`);
   }

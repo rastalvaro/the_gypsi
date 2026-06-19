@@ -11,7 +11,7 @@
       "featured": true
     },
     {
-      "id": "face and body butter",
+      "id": "face-and-body-butter",
       "name": "The Face and Body Butter",
       "type": "Moisturizer · 16 oz",
       "price": 40,
@@ -21,7 +21,7 @@
       "featured": false
     },
     {
-      "id": "eyelash serum",
+      "id": "eyelash-serum",
       "name": "The Eyelash Serum",
       "type": "Eyelash Moisture & Growth · 2 oz",
       "price": 25,
@@ -31,7 +31,7 @@
       "featured": false
     },
     {
-      "id": "lip butter",
+      "id": "lip-butter",
       "name": "The Lip Butter",
       "type": "Lip Moisturizer · 2 oz",
       "price": 25,

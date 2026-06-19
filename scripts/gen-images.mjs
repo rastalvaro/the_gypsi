@@ -36,7 +36,7 @@ const IMAGES = [
   { name: "product-lip-butter", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   // CMS-uploaded masters referenced from content/*.json (The Tea product + the story photo).
   { name: "herbaljarhighres", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
-  { name: "SkincareHighRes", widths: [400, 640, 1000], webpQ: 80, avifCq: 32 },
+  { name: "founder-story", widths: [400, 640, 1000], webpQ: 80, avifCq: 32 },
 ];
 
 // Auto-detect the current hero image from content/hero.json and merge hero widths into

@@ -24,20 +24,32 @@ const imgDir = resolve(root, "public/img");
 // all products (serum's native 1013 and the others' 1024 both cover 1000). The dark
 // hero needs a higher cq / lower webp-q to stay smaller than its lighter siblings.
 const PRODUCT_WIDTHS = [320, 512, 768, 1000];
+const HERO_WIDTHS = [360, 480, 660];
 const IMAGES = [
-  { name: "hero-photo", widths: [360, 480, 660], webpQ: 75, avifCq: 37 },
+  { name: "hero-photo", widths: HERO_WIDTHS, webpQ: 75, avifCq: 37 },
   { name: "campaign-miracle-serum", widths: [400, 640, 1000], webpQ: 80, avifCq: 32 },
   { name: "product-serum", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "product-cleanser", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "product-oil", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "product-cream", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
-  // product-mask doubles as the hero image, so include both hero + product widths.
-  { name: "product-mask", widths: [320, 360, 480, 512, 660, 768, 1000], webpQ: 80, avifCq: 32 },
+  { name: "product-mask", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "product-lip-butter", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   // CMS-uploaded masters referenced from content/*.json (The Tea product + the story photo).
   { name: "herbaljarhighres", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "SkincareHighRes", widths: [400, 640, 1000], webpQ: 80, avifCq: 32 },
 ];
+
+// Auto-detect the current hero image from content/hero.json and merge hero widths into
+// its IMAGES entry (or add a new one). Changing the hero via the CMS automatically
+// generates the correct AVIF variants on the next CI run — no manual edit needed.
+const heroJson = JSON.parse(readFileSync(resolve(root, "content/hero.json"), "utf8"));
+const heroName = heroJson.image.replace(/\.(jpe?g|webp)$/i, "").replace(/^\/img\//, "");
+const heroEntry = IMAGES.find((i) => i.name === heroName);
+if (heroEntry) {
+  heroEntry.widths = [...new Set([...heroEntry.widths, ...HERO_WIDTHS])].sort((a, b) => a - b);
+} else {
+  IMAGES.push({ name: heroName, widths: HERO_WIDTHS, webpQ: 80, avifCq: 32 });
+}
 
 const intrinsicWidth = (file) =>
   parseInt(execFileSync("magick", ["identify", "-format", "%w", `${file}[0]`], { encoding: "utf8" }), 10);

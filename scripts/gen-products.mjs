@@ -147,7 +147,7 @@ const productPage = (p) => {
       url: SITE + pageUrl(p),
     },
   };
-  const stem = p.img.replace(/\.jpe?g$/i, "");
+  const stem = p.img.replace(/\.(jpe?g|webp)$/i, "");
   const srcset = (ext) => PRODUCT_IMG_WIDTHS.map((w) => `${stem}-${w}.${ext} ${w}w`).join(", ");
   return `<!doctype html>
 <html lang="en">
@@ -321,6 +321,26 @@ if (indexHtml.includes(begin) && indexHtml.includes(stop)) {
   indexHtml = indexHtml.replace(new RegExp(`${begin}[\\s\\S]*?${stop}`), `${begin}\n    ${ld}\n    ${stop}`);
 } else {
   console.warn("gen-products: LD-PRODUCTS markers not found in index.html — skipped JSON-LD injection.");
+}
+
+// --- Hero preload imagesrcset — rewritten to match content/hero.json ---
+// Widths must stay in sync with the Hero <Picture widths={[360, 480, 660]}> in sections.tsx.
+const HERO_WIDTHS = [360, 480, 660];
+const hero = JSON.parse(readFileSync(resolve(root, "content/hero.json"), "utf8"));
+const heroStem = hero.image.replace(/\.(jpe?g|webp)$/i, "");
+const heroImagesrcset = HERO_WIDTHS.map((w) => `${heroStem}-${w}.avif ${w}w`).join(", ");
+const heroPreloadLink =
+  `<link\n      rel="preload"\n      as="image"\n      type="image/avif"\n` +
+  `      fetchpriority="high"\n      imagesrcset="${heroImagesrcset}"\n      imagesizes="100vw"\n    />`;
+const heroBegin = "<!-- HERO-PRELOAD-BEGIN -->";
+const heroEnd = "<!-- HERO-PRELOAD-END -->";
+if (indexHtml.includes(heroBegin) && indexHtml.includes(heroEnd)) {
+  indexHtml = indexHtml.replace(
+    new RegExp(`${heroBegin}[\\s\\S]*?${heroEnd}`),
+    `${heroBegin}\n    ${heroPreloadLink}\n    ${heroEnd}`
+  );
+} else {
+  console.warn("gen-products: HERO-PRELOAD markers not found in index.html — skipped preload update.");
 }
 
 // Inject SEO Description

@@ -25,8 +25,9 @@
          candidate it will paint — once, early. Intentionally AVIF-only: adding a second
          type=image/webp preload would make the ~93% of browsers supporting BOTH download
          the hero twice. Non-AVIF browsers (~5%) skip this and fetch the WebP/JPEG from the
-         <picture> at paint. Keep widths in sync with scripts/gen-images.mjs + the Hero
-         <Picture> in src/sections.tsx. -->
+         <picture> at paint. imagesrcset is rewritten by scripts/gen-products.mjs at build
+         to always match content/hero.json — do not edit by hand. -->
+    <!-- HERO-PRELOAD-BEGIN -->
     <link
       rel="preload"
       as="image"
@@ -35,6 +36,7 @@
       imagesrcset="/img/product-mask-360.avif 360w, /img/product-mask-480.avif 480w, /img/product-mask-660.avif 660w"
       imagesizes="100vw"
     />
+    <!-- HERO-PRELOAD-END -->
 
     <!-- Social share (link previews) -->
     <meta property="og:type" content="website" />

@@ -17,27 +17,6 @@
   ],
   "columns": [
     {
-      "heading": "Shop",
-      "links": [
-        {
-          "label": "The Miracle Serum",
-          "href": "#serum"
-        },
-        {
-          "label": "Verdant Mask",
-          "href": "#line"
-        },
-        {
-          "label": "Wanderer's Oil",
-          "href": "#line"
-        },
-        {
-          "label": "Moonlit Balm",
-          "href": "#line"
-        }
-      ]
-    },
-    {
       "heading": "About",
       "links": [
         {
@@ -47,14 +26,6 @@
         {
           "label": "Ingredients",
           "href": "#ingredients"
-        },
-        {
-          "label": "Sustainability",
-          "href": "#"
-        },
-        {
-          "label": "Journal",
-          "href": "#"
         }
       ]
     },

@@ -11,9 +11,9 @@
       "featured": true
     },
     {
-      "id": "face and body butter",
-      "name": "The Face and Body Butter",
-      "type": "Moisturizer · 16 oz",
+      "id": "bodybutter",
+      "name": "The Body Butter",
+      "type": "Body Moisturizer · 16 oz",
       "price": 40,
       "description": "Can be used for body, face or hands that need natural and lasting moisture. Highly moisturizing, use sparingly. Can also be used as a hydrating face mask.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/product-cleanser.jpeg",
@@ -21,7 +21,7 @@
       "featured": false
     },
     {
-      "id": "eyelash serum",
+      "id": "eyelashserum",
       "name": "The Eyelash Serum",
       "type": "Eyelash Moisture & Growth · 2 oz",
       "price": 25,
@@ -31,7 +31,7 @@
       "featured": false
     },
     {
-      "id": "lip butter",
+      "id": "lipbutter",
       "name": "The Lip Butter",
       "type": "Lip Moisturizer · 2 oz",
       "price": 25,
@@ -41,12 +41,21 @@
       "featured": false
     },
     {
-      "id": "multivitamin",
+      "id": "tea",
       "name": "The Tea",
-      "type": "The Tea Blend - 16 oz",
+      "type": "Tea Blend - 16 oz",
       "price": 30,
       "description": "An organic blend of all the best herbs and flowers for that skin of yours. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/herbaljarhighres.webp",
+      "tag": ""
+    },
+    {
+      "id": "oil",
+      "name": "The Face Oil",
+      "type": "Face oil - 8 oz",
+      "price": 50,
+      "description": "A blend of exotic oils that are super anti-oxidant, anti-aging, boosts collagen production and firms skin.",
+      "img": "/img/faceoil.webp",
       "tag": ""
     }
   ]

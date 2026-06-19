@@ -56,15 +56,37 @@ for (const file of walk(MEDIA_DIR)) {
   }
 }
 
-if (!mapping.length) { console.log('No uploads to normalize.'); process.exit(0); }
+const contentFiles = walk(CONTENT_DIR).filter((p) => p.endsWith('.json'));
+const mediaExists = (pub) => fs.existsSync(path.join(MEDIA_DIR, pub.slice(`${PUBLIC_PREFIX}/`.length)));
+
+// Reconcile dangling refs: a content image path whose file is gone but a .jpeg
+// sibling exists. This catches CMS "ref-only" regressions — Sveltia re-emits an
+// upload's original .webp path on a later save (after this script already renamed
+// the file to .jpeg), and that save touches no media file, so the conversion loop
+// above finds nothing and old code bailed early, shipping a broken image. Here we
+// repair the ref to the .jpeg master that actually exists.
+const RASTER_RE = /\/img\/[^"'\s]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
+const dangling = new Map(); // from -> to
+for (const f of contentFiles) {
+  for (const ref of fs.readFileSync(f, 'utf8').match(RASTER_RE) || []) {
+    if (/-\d+\.[a-z]+$/i.test(ref)) continue;            // skip responsive variants
+    if (mediaExists(ref) || dangling.has(ref)) continue; // resolves, or already queued
+    const jpeg = ref.replace(/\.[^.]+$/, TARGET_EXT);
+    if (mediaExists(jpeg)) dangling.set(ref, jpeg);
+    else console.warn(`⚠ ${ref} (in ${f}) has no master and no ${TARGET_EXT} sibling — cannot auto-repair.`);
+  }
+}
+
+const rewrites = [...mapping, ...[...dangling].map(([from, to]) => ({ from, to }))];
+if (!rewrites.length) { console.log('Nothing to normalize or reconcile.'); process.exit(process.exitCode || 0); }
 
 // Rewrite references in content/*.json (exact-string replace of the public path).
-for (const f of walk(CONTENT_DIR).filter((p) => p.endsWith('.json'))) {
+for (const f of contentFiles) {
   let txt = fs.readFileSync(f, 'utf8');
   let changed = false;
-  for (const { from, to } of mapping) {
+  for (const { from, to } of rewrites) {
     if (txt.includes(from)) { txt = txt.split(from).join(to); changed = true; }
   }
   if (changed) { fs.writeFileSync(f, txt); console.log(`rewrote refs in ${f}`); }
 }
-console.log(`Normalized ${mapping.length} image(s).`);
+console.log(`Normalized ${mapping.length} image(s); reconciled ${dangling.size} dangling ref(s).`);

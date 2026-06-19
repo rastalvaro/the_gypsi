@@ -5,7 +5,7 @@
 //   - injects Product JSON-LD into index.html between the LD-PRODUCTS markers
 // Product pages are keyless (no Snipcart key) so they're safe to commit; they carry a
 // hidden snipcart-add-item div that Snipcart crawls (data-item-url points at the page).
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, basename } from "node:path";
 import { Marked } from "marked";
@@ -61,6 +61,28 @@ for (const p of products) {
   }
   if (ids.has(p.id)) throw new Error(`gen-products: duplicate product id "${p.id}"`);
   ids.add(p.id);
+}
+
+// --- Guard: every image referenced in content must have its master on disk ---
+// The <img> fallback, OG image, and Snipcart data-item-image use the master path
+// verbatim, so a dead ref (e.g. a CMS .webp regression) ships a broken image.
+// normalize-uploads self-heals these (.webp→.jpeg) on push; this is the backstop
+// that fails the build loudly rather than deploying a broken master.
+{
+  const imgRe = /\/img\/[^"'\s]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
+  const dead = new Set();
+  for (const f of readdirSync(resolve(root, "content")).filter((n) => n.endsWith(".json"))) {
+    const txt = readFileSync(resolve(root, "content", f), "utf8");
+    for (const ref of txt.match(imgRe) || []) {
+      if (!existsSync(resolve(root, "public" + ref))) dead.add(`${ref}  (content/${f})`);
+    }
+  }
+  if (dead.size) {
+    throw new Error(
+      `gen-products: content references image masters that don't exist:\n  ${[...dead].join("\n  ")}\n` +
+        `Fix the ref or add the master. normalize-uploads auto-repairs .webp→.jpeg regressions on push.`
+    );
+  }
 }
 
 const esc = (s) =>

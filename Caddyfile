@@ -46,13 +46,29 @@
 
 		# Caching. Hashed build assets are immutable; photos/fonts are long-lived but
 		# not content-hashed; fonts.css is the regenerable @font-face index (short).
-		@assets path /assets/*
+		# Each matcher ALSO requires the file to exist (`file`) so a 404 never inherits
+		# the long Cache-Control — otherwise a momentarily-missing asset (e.g. a new
+		# upload whose variants haven't deployed yet) gets its 404 cached for a week.
+		@assets {
+			path /assets/*
+			file
+		}
 		header @assets Cache-Control "public, max-age=31536000, immutable"
-		@img path /img/*
+		@img {
+			path /img/*
+			file
+		}
 		header @img Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
-		@fonts path /fonts/*
+		@fonts {
+			path /fonts/*
+			not path /fonts/fonts.css
+			file
+		}
 		header @fonts Cache-Control "public, max-age=31536000"
-		@fontscss path /fonts/fonts.css
+		@fontscss {
+			path /fonts/fonts.css
+			file
+		}
 		header @fontscss Cache-Control "public, max-age=3600, stale-while-revalidate=86400"
 
 		file_server

@@ -157,17 +157,7 @@ export function Hero() {
             {h.lede}
           </p>
         </Reveal>
-        <Reveal delay={520}>
-          <div className="flex flex-wrap" style={{ gap: 16, marginTop: 34 }}>
-            <Button variant="light" href="#serum" arrow>
-              {h.ctaPrimary}
-            </Button>
-            <Button variant="ghost" href="#ritual" className="hero-ghost">
-              {h.ctaSecondary}
-            </Button>
-          </div>
-        </Reveal>
-        <Reveal delay={640}>
+        <Reveal delay={600}>
           <div
             className="flex flex-wrap"
             style={{ gap: 38, marginTop: 56, borderTop: "1px solid rgba(243,239,230,.28)", paddingTop: 26 }}

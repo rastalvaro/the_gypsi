@@ -1,7 +1,8 @@
 # Production web server for The Gypsi on Coolify (Dockerfile build pack).
-# Serves the static Vite build in /srv. Caddy listens on :80; TLS is terminated
-# upstream by Cloudflare. This file replaces the inert netlify.toml — the headers
-# and routing below are what actually reach the browser.
+# Serves the static Vite build in /srv. Caddy listens on :3000 (Coolify's default
+# app port + healthcheck target); TLS is terminated upstream by Cloudflare. This
+# file replaces the inert netlify.toml — the headers and routing below are what
+# actually reach the browser.
 #
 # Key behaviours:
 #  - Missing files return a real 404 (NO single-page-app fallback). The site has
@@ -13,7 +14,7 @@
 #  - Security headers (CSP/HSTS/etc.) ported from the old netlify.toml.
 #  - /admin (Sveltia CMS) gets its own, more permissive CSP.
 
-:80 {
+:3000 {
 	root * /srv
 	encode zstd gzip
 

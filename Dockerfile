@@ -27,4 +27,5 @@ RUN npm run build
 FROM caddy:2-alpine
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /app/dist /srv
-EXPOSE 80
+# Caddy listens on :3000 to match Coolify's default app port + healthcheck.
+EXPOSE 3000

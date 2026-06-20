@@ -20,16 +20,6 @@
       "tag": ""
     },
     {
-      "id": "bodybutter",
-      "name": "The Body Butter",
-      "type": "Body Moisturizer · 16 oz",
-      "price": 40,
-      "description": "Can be used for body, face or hands that need natural and lasting moisture. Highly moisturizing, use sparingly. Can also be used as a hydrating face mask.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/product-cleanser.jpeg",
-      "tag": "",
-      "featured": false
-    },
-    {
       "id": "eyelashserum",
       "name": "The Eyelash Serum",
       "type": "Eyelash Moisture & Growth · 2 oz",
@@ -46,6 +36,16 @@
       "price": 25,
       "description": "Healing, lasting moisture for dry, cracked lips.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/1b91ceb6-03db-4bef-9000-185376ae2c08.webp",
+      "tag": "",
+      "featured": false
+    },
+    {
+      "id": "bodybutter",
+      "name": "The Body Butter",
+      "type": "Body Moisturizer · 16 oz",
+      "price": 40,
+      "description": "Can be used for body, face or hands that need natural and lasting moisture. Highly moisturizing, use sparingly. Can also be used as a hydrating face mask.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "img": "/img/product-cleanser.jpeg",
       "tag": "",
       "featured": false
     },

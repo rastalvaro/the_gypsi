@@ -1,3 +1,8 @@
+# ⚠️ INACTIVE IN PRODUCTION. Production is served by Coolify (Docker + Caddy), not Netlify —
+# nothing in this file reaches the live site (verified: no CSP/HSTS on prod, /img cache TTL
+# differs). Edit `Caddyfile` for real routing/headers/caching. This file is kept only for the
+# repo's vestigial Netlify deploy-preview check; if that's removed, delete this file.
+#
 # Build / publish for Netlify.
 # Connect this repo (or the gypsi-vite/ subfolder as base) and these settings are picked up.
 

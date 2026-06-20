@@ -16,7 +16,7 @@
       "type": "Face oil - 8 oz",
       "price": 50,
       "description": "A blend of exotic oils that are super anti-oxidant, anti-aging, boosts collagen production and firms skin.",
-      "img": "/img/faceoil.webp",
+      "img": "/img/faceoil.jpeg",
       "tag": ""
     },
     {
@@ -25,7 +25,7 @@
       "type": "Face Moisturizer - 4 oz.",
       "price": 40,
       "description": "A deeply moisturizing face butter that melts into skin, leaving it soft, smooth, and radiant. Made with rich botanical butters and oils to moisturize, restore, and protect.",
-      "img": "/img/facebutter.webp",
+      "img": "/img/facebutter.jpeg",
       "tag": ""
     },
     {
@@ -34,7 +34,7 @@
       "type": "Lip Moisturizer · 2 oz",
       "price": 25,
       "description": "Healing, lasting moisture for dry, cracked lips.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/lipbutter2.webp",
+      "img": "/img/lipbutter2.jpeg",
       "tag": "",
       "featured": false
     },
@@ -54,7 +54,7 @@
       "type": "Body Moisturizer · 16 oz",
       "price": 40,
       "description": "Can be used for body, face or hands that need natural and lasting moisture. Highly moisturizing, use sparingly. Can also be used as a hydrating face mask.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/bodybutter.webp",
+      "img": "/img/bodybutter.jpeg",
       "tag": "",
       "featured": false
     },
@@ -64,7 +64,7 @@
       "type": "Tea Blend - 16 oz",
       "price": 30,
       "description": "An organic blend of all the best herbs and flowers for that skin of yours. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/thetea.webp",
+      "img": "/img/thetea.jpeg",
       "tag": ""
     }
   ]

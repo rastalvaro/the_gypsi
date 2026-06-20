@@ -24,8 +24,26 @@ const HERO_WIDTHS = [360, 480, 660];
 const STORY_WIDTHS = [400, 640, 1000];
 const ALL_WIDTHS = [...new Set([...HERO_WIDTHS, ...PRODUCT_WIDTHS, ...STORY_WIDTHS])];
 
+// ImageMagick 7 ships the `magick` command; ImageMagick 6 (the CI runner's distro
+// package) ships `convert`/`identify` instead. Detect once and use whichever exists,
+// so the gen-images CI workflow doesn't die with "spawnSync magick ENOENT".
+const hasMagick = (() => {
+  try {
+    execFileSync("magick", ["-version"], { stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+})();
+const runConvert = (args, opts) => execFileSync(hasMagick ? "magick" : "convert", args, opts);
+
 const intrinsicWidth = (file) =>
-  parseInt(execFileSync("magick", ["identify", "-format", "%w", `${file}[0]`], { encoding: "utf8" }), 10);
+  parseInt(
+    hasMagick
+      ? execFileSync("magick", ["identify", "-format", "%w", `${file}[0]`], { encoding: "utf8" })
+      : execFileSync("identify", ["-format", "%w", `${file}[0]`], { encoding: "utf8" }),
+    10
+  );
 
 // Resolve the master file for an image stem: prefer .jpeg, fall back to .webp.
 const masterExt = (name) => {
@@ -72,15 +90,22 @@ for (const [name, set] of widthsByName) {
   IMAGES.push({ name, widths: [...set].sort((a, b) => a - b), webpQ: 80, avifCq: name === "placeholder" ? 40 : 32 });
 }
 
+// Never delete a real master during variant cleanup. A master named like "faceoil-1.webp"
+// matches the "<name>-<width>" variant pattern of the image "faceoil", so without this
+// guard cleaning faceoil's variants would wipe the faceoil-1 master (a separate image).
+const masterFiles = new Set(IMAGES.map((i) => `${i.name}.${masterExt(i.name)}`));
+
 const tmp = mkdtempSync(join(tmpdir(), "gypsi-img-"));
 let made = 0;
 
 try {
   for (const img of IMAGES) {
     const master = resolve(imgDir, `${img.name}.${masterExt(img.name)}`);
-    // Clear stale suffixed variants for this image so a dropped width never lingers.
+    // Clear stale suffixed variants for this image so a dropped width never lingers —
+    // but never a file that is itself a managed master.
     for (const f of readdirSync(imgDir))
-      if (new RegExp(`^${img.name}-\\d+\\.(avif|webp)$`).test(f)) unlinkSync(resolve(imgDir, f));
+      if (new RegExp(`^${img.name}-\\d+\\.(avif|webp)$`).test(f) && !masterFiles.has(f))
+        unlinkSync(resolve(imgDir, f));
 
     const native = intrinsicWidth(master);
     for (const w of img.widths) {
@@ -92,8 +117,8 @@ try {
       const avifOut = resolve(imgDir, `${img.name}-${w}.avif`);
       const png = join(tmp, `${img.name}-${w}.png`);
 
-      execFileSync("magick", [master, "-resize", `${w}x`, "-strip", "-quality", String(img.webpQ), "-define", "webp:method=6", webpOut]);
-      execFileSync("magick", [master, "-resize", `${w}x`, "-strip", png]);
+      runConvert([master, "-resize", `${w}x`, "-strip", "-quality", String(img.webpQ), "-define", "webp:method=6", webpOut]);
+      runConvert([master, "-resize", `${w}x`, "-strip", png]);
       execFileSync("avifenc", ["-a", "end-usage=q", "-a", `cq-level=${img.avifCq}`, "-s", "6", "-j", "all", png, avifOut], { stdio: "ignore" });
 
       const aKB = (statSync(avifOut).size / 1024).toFixed(1);

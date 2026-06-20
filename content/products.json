@@ -16,7 +16,7 @@
       "type": "Face oil - 8 oz",
       "price": 50,
       "description": "A blend of exotic oils that are super anti-oxidant, anti-aging, boosts collagen production and firms skin.",
-      "img": "/img/faceoil.jpeg",
+      "img": "/img/faceoil.webp",
       "tag": ""
     },
     {
@@ -25,8 +25,18 @@
       "type": "Face Moisturizer - 4 oz.",
       "price": 40,
       "description": "A deeply moisturizing face butter that melts into skin, leaving it soft, smooth, and radiant. Made with rich botanical butters and oils to moisturize, restore, and protect.",
-      "img": "/img/facebutter.jpeg",
+      "img": "/img/facebutter.webp",
       "tag": ""
+    },
+    {
+      "id": "lipbutter",
+      "name": "The Lip Butter",
+      "type": "Lip Moisturizer · 2 oz",
+      "price": 25,
+      "description": "Healing, lasting moisture for dry, cracked lips.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "img": "/img/lipbutter2.webp",
+      "tag": "",
+      "featured": false
     },
     {
       "id": "eyelashserum",
@@ -35,16 +45,6 @@
       "price": 25,
       "description": "Grow lashes and eyebrows naturally for that beautiful island look. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/product-oil.jpeg",
-      "tag": "",
-      "featured": false
-    },
-    {
-      "id": "lipbutter",
-      "name": "The Lip Butter",
-      "type": "Lip Moisturizer · 2 oz",
-      "price": 25,
-      "description": "Healing, lasting moisture for dry, cracked lips.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/lipbutter2.jpeg",
       "tag": "",
       "featured": false
     },
@@ -64,7 +64,7 @@
       "type": "Tea Blend - 16 oz",
       "price": 30,
       "description": "An organic blend of all the best herbs and flowers for that skin of yours. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/thetea.jpeg",
+      "img": "/img/thetea.webp",
       "tag": ""
     }
   ]

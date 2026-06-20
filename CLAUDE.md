@@ -1,15 +1,23 @@
 # CLAUDE.md — The Gypsi (Vite build)
 
 Context for Claude Code. This is the **production codebase** for The Gypsi storefront:
-**Vite + React 18 + TypeScript + Tailwind CSS 4**, deployed static to Netlify at
-`thegypsi.com`. Read fully before changing things.
+**Vite + React 18 + TypeScript + Tailwind CSS 4**, deployed static via **Coolify**
+(Docker image: Vite build → served by **Caddy**, see `Dockerfile` + `Caddyfile`), fronted by
+Cloudflare at `thegypsi.com`. Read fully before changing things.
+
+> **Hosting note:** production is **Coolify, not Netlify** — `netlify.toml` is **inactive**
+> (its headers/redirects do not reach production; verified: no CSP/HSTS on the live site). The
+> live routing, security headers, and caching come from `Caddyfile`. A Netlify site is still
+> wired to the repo for PR deploy-preview checks, but it is not what serves prod DNS.
 
 ## What this is
 
 A single-page botanical-skincare marketing/storefront site. No backend. Content lives in
 **`content/*.json` files** (edited via the Sveltia CMS at `/admin/` or directly); the store
-is **Snipcart** (activated via env key); the newsletter is **Netlify Forms**. A build step
-also generates **per-product SEO pages** and a **sitemap**.
+is **Snipcart** (activated via env key); the newsletter uses **Netlify Forms** — which does
+**not** work on Coolify, so newsletter signups currently go nowhere (owner TODO: move to a
+form backend, see the Newsletter section). A build step also generates **per-product SEO
+pages** and a **sitemap**.
 
 ## Stack & scripts
 
@@ -135,13 +143,16 @@ both the script and `src/types.ts`.
 - ProductCard "Add to Bag" reveal is CSS-driven (`.card-media` / `.card-add`): **always visible
   on touch, hover/keyboard-focus reveal on desktop** — keep this (it was a mobile conversion bug).
 
-## Newsletter (Netlify Forms)
+## Newsletter (Netlify Forms — INACTIVE on Coolify)
 
 - Hidden static `<form name="newsletter" data-netlify="true">` in `index.html` registers the
   form at build. The React `Newsletter` POSTs url-encoded data (incl. `form-name=newsletter`)
   to `/` and **only shows success on `res.ok`** (no false success). Success shows a `WELCOME15`
   code — **create the matching discount in the Snipcart dashboard**.
-- Only works on Netlify. Locally the POST 404s and shows the error state — that's expected.
+- **Netlify Forms only works on Netlify.** Since prod is Coolify, the POST to `/` hits the
+  static server and **404s** (the UI shows the error state). Signups are NOT captured.
+  **Owner TODO:** point the form at a static-friendly backend (Formspree / Web3Forms / Buttondown
+  / a small Coolify service) and add that domain to `form-action` in `Caddyfile`'s CSP.
 
 ## Static pages (hand-authored — NOT generated)
 
@@ -242,8 +253,17 @@ both the script and `src/types.ts`.
 
 ## Deploy
 
-- `netlify.toml`: `command = "npm run build"`, `publish = "dist"`, SPA redirect + headers.
-- Cloudflare DNS → Netlify. Set `VITE_SNIPCART_KEY` and `VITE_SITE_URL` in **Netlify env vars**.
+- **Coolify**, **Dockerfile build pack**, fronted by Cloudflare DNS. The `Dockerfile` runs
+  `npm run build` (Node only — image variants are pre-committed) then serves `dist/` with
+  **Caddy** (`Caddyfile`).
+- **Build vars (Coolify → Build Variables, passed as build args):** `VITE_SITE_URL` and
+  `VITE_SNIPCART_KEY`. They're inlined at build time, so they must be present during the Docker
+  build, not just at runtime. (`VITE_SNIPCART_KEY` is Snipcart's *public* key — fine to bake in.)
+- **`Caddyfile`** owns production routing, security headers (CSP/HSTS/etc.), and caching, and
+  returns a real **404 for missing files** (no SPA fallback — the site has no client router, so
+  this prevents missing assets being served `index.html` and poisoning the CDN cache).
+- `netlify.toml` is **inactive** (kept only for the repo's vestigial Netlify deploy-preview).
+  Don't rely on it for prod headers/redirects — edit `Caddyfile`.
 
 ## Conventions & gotchas
 

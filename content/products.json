@@ -57,6 +57,15 @@
       "description": "An organic blend of all the best herbs and flowers for that skin of yours. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/thetea.webp",
       "tag": ""
+    },
+    {
+      "id": "thefacebutter",
+      "name": "The Face Butter",
+      "type": "Face Moisturizer - 4 oz.",
+      "price": 40,
+      "description": "A deeply moisturizing face butter that melts into skin, leaving it soft, smooth, and radiant. Made with rich botanical butters and oils to moisturize, restore, and protect.",
+      "img": "/img/facebutter.webp",
+      "tag": ""
     }
   ]
 }

@@ -11,6 +11,15 @@
       "featured": true
     },
     {
+      "id": "oil",
+      "name": "The Face Oil",
+      "type": "Face oil - 8 oz",
+      "price": 50,
+      "description": "A blend of exotic oils that are super anti-oxidant, anti-aging, boosts collagen production and firms skin.",
+      "img": "/img/faceoil.webp",
+      "tag": ""
+    },
+    {
       "id": "bodybutter",
       "name": "The Body Butter",
       "type": "Body Moisturizer · 16 oz",
@@ -46,16 +55,7 @@
       "type": "Tea Blend - 16 oz",
       "price": 30,
       "description": "An organic blend of all the best herbs and flowers for that skin of yours. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
-      "img": "/img/thetea.jpeg",
-      "tag": ""
-    },
-    {
-      "id": "oil",
-      "name": "The Face Oil",
-      "type": "Face oil - 8 oz",
-      "price": 50,
-      "description": "A blend of exotic oils that are super anti-oxidant, anti-aging, boosts collagen production and firms skin.",
-      "img": "/img/faceoil.jpeg",
+      "img": "/img/thetea.webp",
       "tag": ""
     }
   ]

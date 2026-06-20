@@ -31,33 +31,44 @@ try {
   // Directory might not exist initially
 }
 
-// --- Graceful image fallback (runs before any content is read) ---------------
-// If a content image ref points to a master that doesn't exist (a CMS upload that
-// didn't land, a dead .webp ghost, a typo), swap it for the placeholder instead of
-// failing the whole build — one missing photo must not freeze the deploy. The source
-// JSON is rewritten in place so the React build + prerender pick up the placeholder
-// too. A loud warning lists what the owner should fix in the CMS.
+// --- Graceful image resolution (runs before any content is read) -------------
+// A content image ref can point to a file that doesn't exist for two reasons:
+//   1. The CMS re-emits an upload's ORIGINAL extension (e.g. ".webp") even though
+//      the pipeline saved the file as ".jpeg" — so the ".jpeg" twin sits right
+//      there. We heal the ref to that real ".jpeg" sibling.
+//   2. A true ghost — the upload never landed (no file in any format). We swap it
+//      for the placeholder so one missing photo can't freeze the whole deploy.
+// The source JSON is rewritten in place so the React build + prerender pick up the
+// resolved paths too. Healing is silent; placeholders print a loud "fix me" list.
 const PLACEHOLDER = "/img/placeholder.jpeg";
 {
   const imgRe = /\/img\/[^"]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
-  if (!existsSync(resolve(root, "public" + PLACEHOLDER)))
+  const onDisk = (ref) => existsSync(resolve(root, "public" + ref));
+  if (!onDisk(PLACEHOLDER))
     throw new Error(`gen-products: fallback ${PLACEHOLDER} is missing — run \`npm run gen:images\`.`);
-  const replaced = [];
+  const healed = [];
+  const placeheld = [];
   for (const f of readdirSync(resolve(root, "content")).filter((n) => n.endsWith(".json"))) {
     const p = resolve(root, "content", f);
     let txt = readFileSync(p, "utf8");
     let changed = false;
     for (const ref of new Set(txt.match(imgRe) || [])) {
-      if (ref === PLACEHOLDER || existsSync(resolve(root, "public" + ref))) continue;
-      txt = txt.split(ref).join(PLACEHOLDER);
-      replaced.push(`${ref}  (content/${f})`);
+      if (ref === PLACEHOLDER || onDisk(ref)) continue;
+      const sibling = ref.replace(/\.[^.]+$/, ".jpeg");
+      const target = sibling !== ref && onDisk(sibling) ? sibling : PLACEHOLDER;
+      txt = txt.split(ref).join(target);
+      (target === PLACEHOLDER ? placeheld : healed).push(`${ref} → ${target}  (content/${f})`);
       changed = true;
     }
     if (changed) writeFileSync(p, txt);
   }
-  if (replaced.length) {
-    console.warn(`\n⚠️  gen-products: ${replaced.length} missing image(s) swapped for the placeholder — fix the ref in the CMS:`);
-    for (const r of replaced) console.warn(`     ${r}`);
+  if (healed.length) {
+    console.log(`gen-products: healed ${healed.length} stale image ref(s) to their .jpeg twin:`);
+    for (const r of healed) console.log(`     ${r}`);
+  }
+  if (placeheld.length) {
+    console.warn(`\n⚠️  gen-products: ${placeheld.length} missing image(s) → placeholder — re-select the image in the CMS:`);
+    for (const r of placeheld) console.warn(`     ${r}`);
     console.warn("");
   }
 }

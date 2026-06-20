@@ -40,6 +40,9 @@ const IMAGES = [
   // Client CMS uploads: themask (also the hero — hero auto-detect adds hero widths), faceoil.
   { name: "themask", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "faceoil", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
+  // Fallback shown when a content image ref is missing (gen-products swaps dead refs to it).
+  // Carries the union of all role widths (hero/product/story) so it works in any slot.
+  { name: "placeholder", widths: [320, 360, 400, 480, 512, 640, 660, 768, 1000], webpQ: 80, avifCq: 40 },
 ];
 
 // Auto-detect the current hero image from content/hero.json and merge hero widths into

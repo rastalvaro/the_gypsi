@@ -37,6 +37,9 @@ const IMAGES = [
   // CMS-uploaded masters referenced from content/*.json (The Tea product + the story photo).
   { name: "herbaljarhighres", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "founder-story", widths: [400, 640, 1000], webpQ: 80, avifCq: 32 },
+  // Client CMS uploads: themask (also the hero — hero auto-detect adds hero widths), faceoil.
+  { name: "themask", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
+  { name: "faceoil", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
 ];
 
 // Auto-detect the current hero image from content/hero.json and merge hero widths into

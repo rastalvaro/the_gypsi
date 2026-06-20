@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - 'public/img/**'
+      # Also run on content edits: the CMS re-emits .webp refs to files the pipeline
+      # saved as .jpeg, which only the reconcile pass (not an upload) can heal.
+      - 'content/**'
 permissions:
   contents: write
 concurrency:

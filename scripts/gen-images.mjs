@@ -40,6 +40,8 @@ const IMAGES = [
   // Client CMS uploads: themask (also the hero — hero auto-detect adds hero widths), faceoil.
   { name: "themask", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   { name: "faceoil", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
+  { name: "facebutter", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
+  { name: "thetea", widths: PRODUCT_WIDTHS, webpQ: 80, avifCq: 32 },
   // Fallback shown when a content image ref is missing (gen-products swaps dead refs to it).
   // Carries the union of all role widths (hero/product/story) so it works in any slot.
   { name: "placeholder", widths: [320, 360, 400, 480, 512, 640, 660, 768, 1000], webpQ: 80, avifCq: 40 },
@@ -87,9 +89,12 @@ const contentText = readdirSync(contentDir)
   .map((f) => readFileSync(resolve(contentDir, f), "utf8"))
   .join("\n");
 const referenced = [...contentText.matchAll(/\/img\/([a-z0-9-]+)\.(jpe?g|webp)/gi)].map((x) => x[1]);
-const drift = [...new Set(referenced)].filter((name) => !managed.has(name));
+// Only flag a referenced image that HAS a master on disk but no ladder (its srcset would
+// 404). A ref with no master in any format is a ghost/typo — gen-products resolves it to
+// the .jpeg twin or the placeholder at build, so it needs no ladder here.
+const drift = [...new Set(referenced)].filter((name) => !managed.has(name) && masterExt(name));
 if (drift.length)
-  throw new Error(`gen-images: content JSON references ${drift.map((n) => "/img/" + n).join(", ")} with no IMAGES ladder — add one (its srcset entries would 404).`);
+  throw new Error(`gen-images: content JSON references ${drift.map((n) => "/img/" + n).join(", ")} with a master but no IMAGES ladder — add one (its srcset entries would 404).`);
 
 const tmp = mkdtempSync(join(tmpdir(), "gypsi-img-"));
 let made = 0;

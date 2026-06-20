@@ -31,6 +31,37 @@ try {
   // Directory might not exist initially
 }
 
+// --- Graceful image fallback (runs before any content is read) ---------------
+// If a content image ref points to a master that doesn't exist (a CMS upload that
+// didn't land, a dead .webp ghost, a typo), swap it for the placeholder instead of
+// failing the whole build — one missing photo must not freeze the deploy. The source
+// JSON is rewritten in place so the React build + prerender pick up the placeholder
+// too. A loud warning lists what the owner should fix in the CMS.
+const PLACEHOLDER = "/img/placeholder.jpeg";
+{
+  const imgRe = /\/img\/[^"]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
+  if (!existsSync(resolve(root, "public" + PLACEHOLDER)))
+    throw new Error(`gen-products: fallback ${PLACEHOLDER} is missing — run \`npm run gen:images\`.`);
+  const replaced = [];
+  for (const f of readdirSync(resolve(root, "content")).filter((n) => n.endsWith(".json"))) {
+    const p = resolve(root, "content", f);
+    let txt = readFileSync(p, "utf8");
+    let changed = false;
+    for (const ref of new Set(txt.match(imgRe) || [])) {
+      if (ref === PLACEHOLDER || existsSync(resolve(root, "public" + ref))) continue;
+      txt = txt.split(ref).join(PLACEHOLDER);
+      replaced.push(`${ref}  (content/${f})`);
+      changed = true;
+    }
+    if (changed) writeFileSync(p, txt);
+  }
+  if (replaced.length) {
+    console.warn(`\n⚠️  gen-products: ${replaced.length} missing image(s) swapped for the placeholder — fix the ref in the CMS:`);
+    for (const r of replaced) console.warn(`     ${r}`);
+    console.warn("");
+  }
+}
+
 const siteCopy = JSON.parse(readFileSync(resolve(root, "content/site.json"), "utf8"));
 
 // --- Load products from content/products.json ---
@@ -63,29 +94,6 @@ for (const p of products) {
   ids.add(p.id);
 }
 
-// --- Guard: every image referenced in content must have its master on disk ---
-// The <img> fallback, OG image, and Snipcart data-item-image use the master path
-// verbatim, so a dead ref (e.g. a CMS .webp regression) ships a broken image.
-// normalize-uploads self-heals these (.webp→.jpeg) on push; this is the backstop
-// that fails the build loudly rather than deploying a broken master.
-{
-  // Match the whole path up to the closing JSON quote (spaces included) — a spaced
-  // filename like "ChatGPT Image ….webp" must NOT slip past this guard.
-  const imgRe = /\/img\/[^"]+?\.(?:png|jpe?g|webp|avif|gif|tiff?|bmp|heic|heif)/gi;
-  const dead = new Set();
-  for (const f of readdirSync(resolve(root, "content")).filter((n) => n.endsWith(".json"))) {
-    const txt = readFileSync(resolve(root, "content", f), "utf8");
-    for (const ref of txt.match(imgRe) || []) {
-      if (!existsSync(resolve(root, "public" + ref))) dead.add(`${ref}  (content/${f})`);
-    }
-  }
-  if (dead.size) {
-    throw new Error(
-      `gen-products: content references image masters that don't exist:\n  ${[...dead].join("\n  ")}\n` +
-        `Fix the ref or add the master. normalize-uploads auto-repairs .webp→.jpeg regressions on push.`
-    );
-  }
-}
 
 const esc = (s) =>
   String(s ?? "")

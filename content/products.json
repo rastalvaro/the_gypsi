@@ -24,7 +24,7 @@
       "name": "The Face Butter",
       "type": "Face Moisturizer - 4 oz.",
       "price": 40,
-      "description": "A deeply moisturizing face butter that melts into skin, leaving it soft, smooth, and radiant. Made with rich botanical butters and oils to moisturize, restore, and protect.",
+      "description": "A deeply moisturizing face butter that melts into skin, leaving it soft, smooth, and radiant. Made with rich botanical butters and oils to moisturize, restore, and protect. Melt in hands and apply on clean face, neck, chest and hands for best results. Can also be used as a moisturizing mask.",
       "img": "/img/facebutter.jpeg",
       "tag": ""
     },
@@ -43,7 +43,7 @@
       "name": "The Eyelash Serum",
       "type": "Eyelash Moisture & Growth · 2 oz",
       "price": 25,
-      "description": "Grow lashes and eyebrows naturally for that beautiful island look. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "description": "Grow lashes and eyebrows naturally for that beautiful island look. Apply after cleansing, before bed for best results.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/product-oil.jpeg",
       "tag": "",
       "featured": false
@@ -51,9 +51,9 @@
     {
       "id": "bodybutter",
       "name": "The Body Butter",
-      "type": "Body Moisturizer · 16 oz",
-      "price": 40,
-      "description": "Can be used for body, face or hands that need natural and lasting moisture. Highly moisturizing, use sparingly. Can also be used as a hydrating face mask.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "type": "Body Moisturizer · 8 oz",
+      "price": 50,
+      "description": "Can be used for body or hands that need natural and lasting moisture. Highly moisturizing, use sparingly.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/bodybutter-1.webp",
       "tag": "",
       "featured": false
@@ -61,7 +61,7 @@
     {
       "id": "tea",
       "name": "The Tea",
-      "type": "Tea Blend - 16 oz",
+      "type": "Tea Blend - 17 oz",
       "price": 30,
       "description": "An organic blend of all the best herbs and flowers for that skin of yours. \nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/thetea2.jpeg",

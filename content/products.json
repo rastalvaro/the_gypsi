@@ -3,9 +3,9 @@
     {
       "id": "mask",
       "name": "The Mask",
-      "type": "Face Mask · 2 oz",
+      "type": "Face Mask · 1 oz",
       "price": 60,
-      "description": "Begin with clean, dry skin. Leave for at least an hour but also can be used overnight, every night for maximum results. Wash with room temperature water and continue with your own ritual or use our face and body butter for some moisture.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
+      "description": "Begin with clean, dry skin. Leave for at least an hour but also can be left for up to 4. Wash with room temperature water and continue with your own ritual or use our face butter or face oil for some moisture.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/themask.jpeg",
       "tag": "Bestseller",
       "featured": true
@@ -13,7 +13,7 @@
     {
       "id": "oil",
       "name": "The Face Oil",
-      "type": "Face oil - 8 oz",
+      "type": "Face oil - 4 oz",
       "price": 50,
       "description": "A blend of exotic oils that are super anti-oxidant, anti-aging, boosts collagen production and firms skin.",
       "img": "/img/faceoil.jpeg",
@@ -31,7 +31,7 @@
     {
       "id": "lipbutter",
       "name": "The Lip Butter",
-      "type": "Lip Moisturizer · 2 oz",
+      "type": "Lip Moisturizer · 1 oz",
       "price": 25,
       "description": "Healing, lasting moisture for dry, cracked lips.\nA clean, botanical formula made in small batches — part of The Gypsi ritual.",
       "img": "/img/lipbutter2-1.webp",

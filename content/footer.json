@@ -3,14 +3,6 @@
   "copyright": "© 2026 The Gypsi. All rights reserved.",
   "social": [
     {
-      "label": "Instagram",
-      "href": "#"
-    },
-    {
-      "label": "TikTok",
-      "href": "#"
-    },
-    {
       "label": "Privacy",
       "href": "/privacy.html"
     }
@@ -43,10 +35,6 @@
         {
           "label": "FAQ",
           "href": "/faq.html"
-        },
-        {
-          "label": "Track order",
-          "href": "#"
         }
       ]
     }

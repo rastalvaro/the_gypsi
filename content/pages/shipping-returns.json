@@ -1,7 +1,7 @@
 {
   "title": "Shipping & Returns",
   "description": "The Gypsi shipping options and return policy.",
-  "draft": true,
+  "draft": false,
   "body": "## Shipping\n\nWe ship to [TODO: regions/countries]. Orders are processed within  2–3  business days. Estimated delivery: [TODO: timeframe]. Shipping is [TODO: free over $X / flat $Y / calculated at checkout].\n\n## Returns\n\nIf you're not delighted, you may return unopened items within 30 days of delivery for a refund. [TODO: state your policy on opened/used skincare for hygiene reasons.]\n\n## How to start a return\n\nEmail contactthegypsi@gmail.com with your order number and we'll send return instructions. Buyer is responsible for shipping. \n\n## Refunds\n\nOnce we receive your return, refunds are issued to your original payment method within 5–10 business days.",
   "lastUpdated": "2026-06-04"
 }

@@ -25,10 +25,6 @@
       "heading": "Care",
       "links": [
         {
-          "label": "Contact",
-          "href": "#newsletter"
-        },
-        {
           "label": "Shipping & returns",
           "href": "/shipping-returns.html"
         },
